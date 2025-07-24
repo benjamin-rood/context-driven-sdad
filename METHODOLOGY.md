@@ -81,10 +81,12 @@ Further: "WHEN processing payments THEN the API SHALL respond within 500ms"
 
 ## Context Management
 
+When working on a project, you MUST create a `.claude` directory at the project root (if one does not already exist) with the following structure:
+
 ### Project Context Structure
 ```
 .claude/
-├── CLAUDE.md              # This methodology
+├── METHODOLOGY.md         # This methodology
 ├── PROJECT_CONTEXT.md     # Project-specific information
 ├── context/
 │   ├── patterns.md        # Discovered patterns
@@ -231,7 +233,7 @@ Updates project context with new information
 
 ## Getting Started
 
-1. **Establish Context**: "Please read CLAUDE.md and PROJECT_CONTEXT.md"
+1. **Establish Context**: "Please read METHODOLOGY.md and PROJECT_CONTEXT.md"
 2. **Explore Feature**: "Let's discuss [feature] requirements"
 3. **Build Specifications**: Through natural conversation
 4. **Implement**: With continuous reference to context

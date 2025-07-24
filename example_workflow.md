@@ -6,7 +6,7 @@ This example demonstrates the context-driven approach to developing a complete f
 
 ### Human:
 ```
-Please read .claude/CLAUDE.md and PROJECT_CONTEXT.md to understand our project and methodology.
+Please read .claude/METHODOLOGY.md and PROJECT_CONTEXT.md to understand our project and methodology.
 ```
 
 ### Claude:

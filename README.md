@@ -38,10 +38,10 @@ cp -r .claude /path/to/your/project/
 cd your-project
 
 # Start Claude Code
-claude-code
+claude
 
 # Initialize context
-> Please read .claude/CLAUDE.md and PROJECT_CONTEXT.md to understand our approach
+> Please read .claude/METHODOLOGY.md and PROJECT_CONTEXT.md to understand our approach
 ```
 
 ### 3. Develop Your First Feature
@@ -137,7 +137,7 @@ See `EXAMPLE_WORKFLOW.md` for a full authentication feature showing:
 
 ```
 .claude/
-├── CLAUDE.md              # Core methodology (this framework)
+├── METHODOLOGY.md         # Core methodology (this framework)
 ├── PROJECT_CONTEXT.md     # Your project-specific context
 ├── context/               # Accumulated knowledge
 │   ├── patterns.md        # Discovered code patterns
@@ -155,7 +155,7 @@ See `EXAMPLE_WORKFLOW.md` for a full authentication feature showing:
 ```
 
 ### Core Files
-- **CLAUDE.md** - Instructs Claude on the conversational methodology
+- **METHODOLOGY.md** - Instructs Claude on the conversational methodology
 - **PROJECT_CONTEXT.md** - Template for your project-specific information
 - **install.sh** - Easy installation script
 
@@ -192,7 +192,7 @@ See `EXAMPLE_WORKFLOW.md` for a full authentication feature showing:
 
 3. **Initialize Context**
    ```
-   Please read .claude/CLAUDE.md and PROJECT_CONTEXT.md
+   Please read .claude/METHODOLOGY.md and PROJECT_CONTEXT.md
    ```
 
 4. **Begin Development**

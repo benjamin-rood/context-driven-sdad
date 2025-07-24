@@ -107,9 +107,42 @@ mkdir -p "$INSTALL_PATH"/{commands,context,templates}
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Always copy CLAUDE.md
-print_info "Copying CLAUDE.md..."
-cp "$SCRIPT_DIR/CLAUDE.md" "$INSTALL_PATH/"
+# Always copy METHODOLOGY.md as separate file
+print_info "Copying METHODOLOGY.md..."
+cp "$SCRIPT_DIR/METHODOLOGY.md" "$INSTALL_PATH/"
+
+# Handle CLAUDE.md - restructure with header and methodology reference
+if [[ -f "$INSTALL_PATH/CLAUDE.md" ]]; then
+    print_info "Existing CLAUDE.md found - restructuring with methodology reference..."
+    
+    # Check if it already has our header
+    if ! grep -q "## Purpose and Intent" "$INSTALL_PATH/CLAUDE.md"; then
+        # Backup existing content (skip if it already has our header)
+        if grep -q "^# " "$INSTALL_PATH/CLAUDE.md"; then
+            # Skip first heading and extract the rest
+            sed -n '/^# /,$p' "$INSTALL_PATH/CLAUDE.md" | tail -n +2 > "$INSTALL_PATH/CLAUDE.md.backup"
+        else
+            # No heading, backup all content
+            cp "$INSTALL_PATH/CLAUDE.md" "$INSTALL_PATH/CLAUDE.md.backup"
+        fi
+        
+        # Create new CLAUDE.md with proper structure
+        cat "$SCRIPT_DIR/claude_header_template.md" > "$INSTALL_PATH/CLAUDE.md"
+        
+        # Append existing content if any
+        if [[ -f "$INSTALL_PATH/CLAUDE.md.backup" ]] && [[ -s "$INSTALL_PATH/CLAUDE.md.backup" ]]; then
+            echo "" >> "$INSTALL_PATH/CLAUDE.md"
+            echo "" >> "$INSTALL_PATH/CLAUDE.md"
+            cat "$INSTALL_PATH/CLAUDE.md.backup" >> "$INSTALL_PATH/CLAUDE.md"
+            rm "$INSTALL_PATH/CLAUDE.md.backup"
+        fi
+    else
+        print_info "CLAUDE.md already has proper structure, updating methodology reference only..."
+    fi
+else
+    print_info "Creating new CLAUDE.md with methodology reference..."
+    cp "$SCRIPT_DIR/claude_header_template.md" "$INSTALL_PATH/CLAUDE.md"
+fi
 
 # Copy other files only if they don't exist or if force is used or if project mode
 if [[ "$INSTALL_MODE" == "project" ]] || [[ "$FORCE" == true ]] || [[ ! -f "$INSTALL_PATH/PROJECT_CONTEXT.md" ]]; then
