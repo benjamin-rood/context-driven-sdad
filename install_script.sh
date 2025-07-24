@@ -89,8 +89,8 @@ else
     print_info "Installing to project at $INSTALL_PATH"
 fi
 
-# Check if installation already exists
-if [[ -d "$INSTALL_PATH" ]] && [[ "$FORCE" == false ]]; then
+# Handle existing installation confirmation (only for project mode)
+if [[ "$INSTALL_MODE" == "project" ]] && [[ -d "$INSTALL_PATH" ]] && [[ "$FORCE" == false ]]; then
     print_warning "Installation already exists at $INSTALL_PATH"
     read -p "Do you want to overwrite? (y/N) " -n 1 -r
     echo
@@ -107,18 +107,21 @@ mkdir -p "$INSTALL_PATH"/{commands,context,templates}
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Copy methodology files
-print_info "Copying methodology files..."
-cp "$SCRIPT_DIR/.claude/CLAUDE.md" "$INSTALL_PATH/"
-cp "$SCRIPT_DIR/.claude/PROJECT_CONTEXT.md" "$INSTALL_PATH/"
+# Always copy CLAUDE.md
+print_info "Copying CLAUDE.md..."
+cp "$SCRIPT_DIR/CLAUDE.md" "$INSTALL_PATH/"
 
-# Copy command files
-print_info "Copying command files..."
-cp "$SCRIPT_DIR/.claude/commands/"*.md "$INSTALL_PATH/commands/" 2>/dev/null || true
-
-# Copy template files
-print_info "Copying template files..."
-cp "$SCRIPT_DIR/.claude/templates/"*.md "$INSTALL_PATH/templates/" 2>/dev/null || true
+# Copy other files only if they don't exist or if force is used or if project mode
+if [[ "$INSTALL_MODE" == "project" ]] || [[ "$FORCE" == true ]] || [[ ! -f "$INSTALL_PATH/PROJECT_CONTEXT.md" ]]; then
+    print_info "Copying methodology files..."
+    cp "$SCRIPT_DIR/PROJECT_CONTEXT.md" "$INSTALL_PATH/"
+    
+    print_info "Copying command files..."
+    cp "$SCRIPT_DIR/commands/"*.md "$INSTALL_PATH/commands/" 2>/dev/null || true
+    
+    print_info "Copying template files..."
+    cp "$SCRIPT_DIR/templates/"*.md "$INSTALL_PATH/templates/" 2>/dev/null || true
+fi
 
 # Create initial context files
 print_info "Creating initial context files..."
