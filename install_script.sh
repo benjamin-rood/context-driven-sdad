@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Context-Driven Spec Development for Claude Code
-# Installation Script
+# Installation Script with Hierarchical Override System
 
 set -e  # Exit on error
 
@@ -39,16 +39,31 @@ usage() {
     cat << EOF
 Usage: $0 [OPTIONS]
 
-Options:
-    --global            Install globally for all projects
+Context-Driven Spec Development Installation
+
+Installation Modes:
+    --global            Install methodology globally (~/.claude/)
+                       Includes: METHODOLOGY.md, commands/, templates/
+                       
     --project PATH      Install for specific project (default: current directory)
+                       Smart installation based on global methodology presence:
+                       • If global exists: minimal project setup
+                       • If no global: complete standalone setup
+
+Options:
     --force            Overwrite existing files
     --help             Show this help message
 
 Examples:
-    $0 --global                    # Install globally
+    $0 --global                    # Install methodology globally
     $0 --project /path/to/project  # Install for specific project
-    $0 --force                     # Overwrite existing installation
+    $0 --force --project .         # Force overwrite in current directory
+
+Installation Architecture:
+    Global (~/.claude/):           Shared methodology and tools
+    Project (.claude/):            Project-specific context and overrides
+    
+    Command precedence: project → global → built-in
 EOF
 }
 
@@ -80,85 +95,153 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Determine installation path
-if [[ "$INSTALL_MODE" == "global" ]]; then
-    INSTALL_PATH="$HOME/.claude"
-    print_info "Installing globally to $INSTALL_PATH"
-else
-    INSTALL_PATH="$PROJECT_PATH/.claude"
-    print_info "Installing to project at $INSTALL_PATH"
-fi
-
-# Handle existing installation confirmation (only for project mode)
-if [[ "$INSTALL_MODE" == "project" ]] && [[ -d "$INSTALL_PATH" ]] && [[ "$FORCE" == false ]]; then
-    print_warning "Installation already exists at $INSTALL_PATH"
-    read -p "Do you want to overwrite? (y/N) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        print_info "Installation cancelled"
-        exit 0
-    fi
-fi
-
-# Create directory structure
-print_info "Creating directory structure..."
-mkdir -p "$INSTALL_PATH"/{commands,context,templates}
-
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Always copy METHODOLOGY.md as separate file
-print_info "Copying METHODOLOGY.md..."
-cp "$SCRIPT_DIR/METHODOLOGY.md" "$INSTALL_PATH/"
+# Check if global methodology exists
+check_global_methodology() {
+    local global_path="$HOME/.claude"
+    if [[ -f "$global_path/METHODOLOGY.md" ]] && [[ -d "$global_path/commands" ]] && [[ -d "$global_path/templates" ]]; then
+        return 0  # Global methodology exists
+    else
+        return 1  # No global methodology
+    fi
+}
 
-# Handle CLAUDE.md - restructure with header and methodology reference
-if [[ -f "$INSTALL_PATH/CLAUDE.md" ]]; then
-    print_info "Existing CLAUDE.md found - restructuring with methodology reference..."
+# Install global methodology
+install_global() {
+    local install_path="$HOME/.claude"
     
-    # Check if it already has our header
-    if ! grep -q "## Purpose and Intent" "$INSTALL_PATH/CLAUDE.md"; then
-        # Backup existing content (skip if it already has our header)
-        if grep -q "^# " "$INSTALL_PATH/CLAUDE.md"; then
-            # Skip first heading and extract the rest
-            sed -n '/^# /,$p' "$INSTALL_PATH/CLAUDE.md" | tail -n +2 > "$INSTALL_PATH/CLAUDE.md.backup"
-        else
-            # No heading, backup all content
-            cp "$INSTALL_PATH/CLAUDE.md" "$INSTALL_PATH/CLAUDE.md.backup"
+    print_info "Installing global methodology to $install_path"
+    
+    # Handle existing installation
+    if [[ -d "$install_path" ]] && [[ "$FORCE" == false ]]; then
+        print_warning "Global installation already exists at $install_path"
+        read -p "Do you want to overwrite? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            print_info "Installation cancelled"
+            exit 0
         fi
+    fi
+    
+    # Create directory structure
+    print_info "Creating global directory structure..."
+    mkdir -p "$install_path"/{commands,templates}
+    
+    # Copy core methodology files
+    print_info "Installing METHODOLOGY.md..."
+    cp "$SCRIPT_DIR/METHODOLOGY.md" "$install_path/"
+    
+    print_info "Installing command definitions..."
+    cp "$SCRIPT_DIR/commands/"*.md "$install_path/commands/" 2>/dev/null || true
+    
+    print_info "Installing templates..."
+    cp "$SCRIPT_DIR/templates/"*.md "$install_path/templates/" 2>/dev/null || true
+    
+    # Handle global CLAUDE.md
+    if [[ -f "$install_path/CLAUDE.md" ]]; then
+        print_info "Updating existing global CLAUDE.md with methodology reference..."
         
-        # Create new CLAUDE.md with proper structure
-        cat "$SCRIPT_DIR/claude_header_template.md" > "$INSTALL_PATH/CLAUDE.md"
-        
-        # Append existing content if any
-        if [[ -f "$INSTALL_PATH/CLAUDE.md.backup" ]] && [[ -s "$INSTALL_PATH/CLAUDE.md.backup" ]]; then
-            echo "" >> "$INSTALL_PATH/CLAUDE.md"
-            echo "" >> "$INSTALL_PATH/CLAUDE.md"
-            cat "$INSTALL_PATH/CLAUDE.md.backup" >> "$INSTALL_PATH/CLAUDE.md"
-            rm "$INSTALL_PATH/CLAUDE.md.backup"
+        # Check if it already has our methodology reference
+        if ! grep -q "Context-Driven Spec Development" "$install_path/CLAUDE.md"; then
+            # Backup existing and add methodology reference
+            cp "$install_path/CLAUDE.md" "$install_path/CLAUDE.md.backup"
+            
+            cat > "$install_path/CLAUDE.md.temp" << 'EOF'
+# Claude Code Configuration
+
+## Context-Driven Spec Development
+
+Please read the METHODOLOGY.md file in this directory for the complete development methodology and approach.
+
+This methodology emphasizes conversational specification building, EARS requirements format, and context accumulation across development sessions.
+
+---
+
+EOF
+            cat "$install_path/CLAUDE.md.backup" >> "$install_path/CLAUDE.md.temp"
+            mv "$install_path/CLAUDE.md.temp" "$install_path/CLAUDE.md"
+            rm "$install_path/CLAUDE.md.backup"
         fi
     else
-        print_info "CLAUDE.md already has proper structure, updating methodology reference only..."
+        print_info "Creating global CLAUDE.md with methodology reference..."
+        cat > "$install_path/CLAUDE.md" << 'EOF'
+# Claude Code Configuration
+
+## Context-Driven Spec Development
+
+Please read the METHODOLOGY.md file in this directory for the complete development methodology and approach.
+
+This methodology emphasizes conversational specification building, EARS requirements format, and context accumulation across development sessions.
+
+## Global Installation
+
+This is a global installation providing shared methodology, commands, and templates for all projects.
+
+Individual projects can override commands and templates by placing them in their local `.claude/` directories.
+
+## Usage
+
+In any project:
+1. Create `.claude/` directory with PROJECT_CONTEXT.md
+2. Start Claude Code and reference this methodology
+3. Use hierarchical command system (project overrides global)
+EOF
     fi
-else
-    print_info "Creating new CLAUDE.md with methodology reference..."
-    cp "$SCRIPT_DIR/claude_header_template.md" "$INSTALL_PATH/CLAUDE.md"
-fi
-
-# Copy other files only if they don't exist or if force is used or if project mode
-if [[ "$INSTALL_MODE" == "project" ]] || [[ "$FORCE" == true ]] || [[ ! -f "$INSTALL_PATH/PROJECT_CONTEXT.md" ]]; then
-    print_info "Copying methodology files..."
-    cp "$SCRIPT_DIR/PROJECT_CONTEXT.md" "$INSTALL_PATH/"
     
-    print_info "Copying command files..."
-    cp "$SCRIPT_DIR/commands/"*.md "$INSTALL_PATH/commands/" 2>/dev/null || true
-    
-    print_info "Copying template files..."
-    cp "$SCRIPT_DIR/templates/"*.md "$INSTALL_PATH/templates/" 2>/dev/null || true
-fi
+    print_success "Global methodology installed successfully!"
+    echo ""
+    print_info "Next steps:"
+    echo "  • Run '$0 --project /path/to/project' to set up individual projects"
+    echo "  • Projects will automatically use global methodology with minimal local setup"
+    echo "  • Projects can override commands/templates by placing them in local .claude/ directory"
+}
 
-# Create initial context files
-print_info "Creating initial context files..."
-cat > "$INSTALL_PATH/context/patterns.md" << 'EOF'
+# Install project-specific setup
+install_project() {
+    local project_path="$PROJECT_PATH"
+    local install_path="$project_path/.claude"
+    
+    # Ensure project path exists
+    if [[ ! -d "$project_path" ]]; then
+        print_error "Project path does not exist: $project_path"
+        exit 1
+    fi
+    
+    # Check if global methodology exists
+    local has_global=false
+    if check_global_methodology; then
+        has_global=true
+        print_info "Global methodology detected - installing minimal project setup"
+    else
+        has_global=false
+        print_info "No global methodology found - installing complete standalone setup"
+    fi
+    
+    # Handle existing installation
+    if [[ -d "$install_path" ]] && [[ "$FORCE" == false ]]; then
+        print_warning "Project installation already exists at $install_path"
+        read -p "Do you want to overwrite? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            print_info "Installation cancelled"
+            exit 0
+        fi
+    fi
+    
+    # Create directory structure
+    print_info "Creating project directory structure..."
+    mkdir -p "$install_path"/{context,commands,templates}
+    
+    # Always install PROJECT_CONTEXT.md template
+    print_info "Installing PROJECT_CONTEXT.md template..."
+    cp "$SCRIPT_DIR/PROJECT_CONTEXT.md" "$install_path/"
+    
+    # Create initial context files
+    print_info "Creating initial context files..."
+    
+    cat > "$install_path/context/patterns.md" << 'EOF'
 # Code Patterns
 
 ## Discovered Patterns
@@ -173,7 +256,7 @@ cat > "$INSTALL_PATH/context/patterns.md" << 'EOF'
 ## Testing Patterns
 EOF
 
-cat > "$INSTALL_PATH/context/decisions.md" << 'EOF'
+    cat > "$install_path/context/decisions.md" << 'EOF'
 # Architectural Decisions
 
 ## Decision Log
@@ -187,7 +270,7 @@ cat > "$INSTALL_PATH/context/decisions.md" << 'EOF'
 **Alternatives**: What else was considered  
 EOF
 
-cat > "$INSTALL_PATH/context/glossary.md" << 'EOF'
+    cat > "$install_path/context/glossary.md" << 'EOF'
 # Domain Glossary
 
 ## Business Terms
@@ -200,7 +283,7 @@ cat > "$INSTALL_PATH/context/glossary.md" << 'EOF'
 *List and define abbreviations used in the project*
 EOF
 
-cat > "$INSTALL_PATH/context/conventions.md" << 'EOF'
+    cat > "$install_path/context/conventions.md" << 'EOF'
 # Coding Conventions
 
 ## Style Guide
@@ -213,58 +296,218 @@ cat > "$INSTALL_PATH/context/conventions.md" << 'EOF'
 
 ## Testing Standards
 EOF
+    
+    # Install methodology files based on global presence
+    if [[ "$has_global" == false ]]; then
+        # Complete standalone installation
+        print_info "Installing complete methodology (standalone mode)..."
+        cp "$SCRIPT_DIR/METHODOLOGY.md" "$install_path/"
+        cp "$SCRIPT_DIR/commands/"*.md "$install_path/commands/" 2>/dev/null || true
+        cp "$SCRIPT_DIR/templates/"*.md "$install_path/templates/" 2>/dev/null || true
+        
+        # Create project CLAUDE.md that references local files
+        cat > "$install_path/CLAUDE.md" << 'EOF'
+# CLAUDE.md
 
-# Create initialization script for project mode
-if [[ "$INSTALL_MODE" == "project" ]]; then
-    cat > "$PROJECT_PATH/init-claude.sh" << 'EOF'
+This file provides guidance to Claude Code when working with this project.
+
+## Context-Driven Spec Development
+
+Please read the METHODOLOGY.md file in this directory for the complete development methodology.
+
+## Project Setup
+
+This is a standalone project installation with complete methodology included locally.
+
+## Usage
+
+1. Read METHODOLOGY.md and PROJECT_CONTEXT.md to understand the approach
+2. Use commands like `/analyze`, `/refine`, `/review` for guided development
+3. Accumulate knowledge in the `context/` directory
+4. Customize commands and templates in local directories as needed
+
+## File Structure
+
+- `METHODOLOGY.md` - Core development methodology
+- `PROJECT_CONTEXT.md` - Project-specific context (fill this in)
+- `context/` - Accumulated project knowledge
+- `commands/` - Command definitions (can be customized)
+- `templates/` - Specification templates (can be customized)
+EOF
+    else
+        # Minimal installation with global methodology reference
+        print_info "Installing minimal project setup (using global methodology)..."
+        
+        # Create project CLAUDE.md that references both global and local
+        cat > "$install_path/CLAUDE.md" << 'EOF'
+# CLAUDE.md
+
+This file provides guidance to Claude Code when working with this project.
+
+## Context-Driven Spec Development
+
+Please read the METHODOLOGY.md file in ~/.claude/ for the complete development methodology.
+
+## Project Setup
+
+This project uses the global Context-Driven Spec Development methodology with project-specific context.
+
+## Hierarchical Override System
+
+Commands and templates follow this precedence:
+1. Project-level (`.claude/commands/`, `.claude/templates/`) - highest priority
+2. Global level (`~/.claude/commands/`, `~/.claude/templates/`) - fallback
+
+## Usage
+
+1. Read ~/.claude/METHODOLOGY.md and local PROJECT_CONTEXT.md to understand the approach
+2. Use commands like `/analyze`, `/refine`, `/review` for guided development
+3. Accumulate knowledge in the local `context/` directory
+4. Override global commands/templates by placing custom versions in local directories
+
+## File Structure
+
+- `PROJECT_CONTEXT.md` - Project-specific context (fill this in)
+- `context/` - Accumulated project knowledge
+- `commands/` - Project-specific command overrides (optional)
+- `templates/` - Project-specific template overrides (optional)
+
+Global methodology files are available in `~/.claude/`
+EOF
+    fi
+    
+    # Create project initialization script
+    cat > "$project_path/init-claude.sh" << 'EOF'
 #!/bin/bash
-# Initialize Claude Code session with context
+# Initialize Claude Code session with Context-Driven Spec Development
 
-echo "Initializing Claude Code with Context-Driven Spec Development..."
+echo "🚀 Initializing Claude Code with Context-Driven Spec Development..."
 echo ""
-echo "Start your session with:"
-echo "  'Please read .claude/CLAUDE.md and PROJECT_CONTEXT.md'"
+
+if [[ -f ~/.claude/METHODOLOGY.md ]]; then
+    echo "📚 Global methodology detected"
+    echo "Start your session with:"
+    echo "  'Please read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md'"
+else
+    echo "📚 Standalone project setup detected"
+    echo "Start your session with:"
+    echo "  'Please read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md'"
+fi
+
 echo ""
 echo "Then begin feature development with:"
 echo "  'Let's explore requirements for [feature]'"
 echo ""
+echo "Available commands:"
+echo "  /analyze [scope]     - Analyze codebase patterns"
+echo "  /refine [aspect]     - Refine specifications"
+echo "  /review [type]       - Review quality and completeness"
+echo ""
 EOF
-    chmod +x "$PROJECT_PATH/init-claude.sh"
-fi
-
-# Create a simple test to verify installation
-print_info "Verifying installation..."
-if [[ -f "$INSTALL_PATH/CLAUDE.md" ]] && [[ -d "$INSTALL_PATH/commands" ]]; then
-    print_success "Installation completed successfully!"
-    echo ""
-    if [[ "$INSTALL_MODE" == "global" ]]; then
-        echo "Global installation complete. The methodology is available for all projects."
-        echo "Copy PROJECT_CONTEXT.md to your project's .claude/ directory to get started."
+    chmod +x "$project_path/init-claude.sh"
+    
+    if [[ "$has_global" == true ]]; then
+        print_success "Minimal project setup complete!"
+        echo ""
+        print_info "Configuration:"
+        echo "  • Using global methodology from ~/.claude/"
+        echo "  • Project context in $install_path"
+        echo "  • Commands/templates can be overridden locally"
     else
-        echo "Project installation complete at: $INSTALL_PATH"
-        echo "Run ./init-claude.sh for usage instructions."
+        print_success "Standalone project setup complete!"
+        echo ""
+        print_info "Configuration:"
+        echo "  • Complete methodology included in project"
+        echo "  • All files contained in $install_path"
+        echo "  • No global dependencies"
     fi
+    
     echo ""
     print_info "Next steps:"
-    echo "  1. Start Claude Code in your project directory"
-    echo "  2. Ask Claude to read .claude/CLAUDE.md"
-    echo "  3. Begin developing with conversational specifications!"
-else
-    print_error "Installation verification failed"
-    exit 1
-fi
+    echo "  1. Fill in PROJECT_CONTEXT.md with your project details"
+    echo "  2. Run ./init-claude.sh for usage instructions"
+    echo "  3. Start Claude Code and begin conversational development!"
+}
+
+# Verify installation
+verify_installation() {
+    if [[ "$INSTALL_MODE" == "global" ]]; then
+        local verify_path="$HOME/.claude"
+        if [[ -f "$verify_path/METHODOLOGY.md" ]] && [[ -d "$verify_path/commands" ]]; then
+            return 0
+        fi
+    else
+        local verify_path="$PROJECT_PATH/.claude"
+        if [[ -f "$verify_path/PROJECT_CONTEXT.md" ]] && [[ -d "$verify_path/context" ]]; then
+            return 0
+        fi
+    fi
+    return 1
+}
 
 # Create uninstall script
-cat > "$INSTALL_PATH/../uninstall-claude-sdd.sh" << EOF
+create_uninstall_script() {
+    local script_path
+    if [[ "$INSTALL_MODE" == "global" ]]; then
+        script_path="$HOME/uninstall-claude-sdd-global.sh"
+        cat > "$script_path" << 'EOF'
 #!/bin/bash
-# Uninstall Context-Driven Spec Development
+# Uninstall Global Context-Driven Spec Development
 
-echo "Removing Context-Driven SDD installation..."
-rm -rf "$INSTALL_PATH"
-rm -f "$INSTALL_PATH/../init-claude.sh"
-rm -f "$INSTALL_PATH/../uninstall-claude-sdd.sh"
-echo "Uninstallation complete."
+echo "Removing global Context-Driven SDD installation..."
+read -p "This will remove ~/.claude/ and all global methodology files. Continue? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    rm -rf ~/.claude/
+    rm -f ~/uninstall-claude-sdd-global.sh
+    echo "✅ Global uninstallation complete."
+else
+    echo "❌ Uninstallation cancelled."
+fi
 EOF
-chmod +x "$INSTALL_PATH/../uninstall-claude-sdd.sh"
+    else
+        script_path="$PROJECT_PATH/uninstall-claude-sdd.sh"
+        cat > "$script_path" << EOF
+#!/bin/bash
+# Uninstall Project Context-Driven Spec Development
 
-print_success "Installation complete! 🎉"
+echo "Removing project Context-Driven SDD installation..."
+read -p "This will remove .claude/ directory and init script. Continue? (y/N) " -n 1 -r
+echo
+if [[ \$REPLY =~ ^[Yy]$ ]]; then
+    rm -rf "$PROJECT_PATH/.claude/"
+    rm -f "$PROJECT_PATH/init-claude.sh"
+    rm -f "$PROJECT_PATH/uninstall-claude-sdd.sh"
+    echo "✅ Project uninstallation complete."
+else
+    echo "❌ Uninstallation cancelled."
+fi
+EOF
+    fi
+    chmod +x "$script_path"
+}
+
+# Main execution
+main() {
+    print_info "Context-Driven Spec Development Installer"
+    echo ""
+    
+    if [[ "$INSTALL_MODE" == "global" ]]; then
+        install_global
+    else
+        install_project
+    fi
+    
+    # Verify installation
+    print_info "Verifying installation..."
+    if verify_installation; then
+        create_uninstall_script
+        print_success "Installation completed successfully! 🎉"
+    else
+        print_error "Installation verification failed"
+        exit 1
+    fi
+}
+
+# Run main function
+main

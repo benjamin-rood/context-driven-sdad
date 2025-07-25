@@ -24,11 +24,14 @@ This framework treats Claude Code as a thinking partner rather than a command ex
 git clone https://github.com/benjamin-rood/context-driven-sdad
 cd context-driven-sdad
 
-# Install globally (recommended)
-./install.sh --global
+# Install globally (recommended for multiple projects)
+./install_script.sh --global
 
-# Or install for a specific project
-cp -r .claude /path/to/your/project/
+# Then set up individual projects
+./install_script.sh --project /path/to/your/project
+
+# Or install standalone for a single project
+./install_script.sh --project /path/to/your/project  # Includes everything needed
 ```
 
 ### 2. Start Your First Session
@@ -37,11 +40,15 @@ cp -r .claude /path/to/your/project/
 # Navigate to your project
 cd your-project
 
+# Use the initialization helper
+./init-claude.sh
+
 # Start Claude Code
 claude
 
-# Initialize context
-> Please read .claude/METHODOLOGY.md and PROJECT_CONTEXT.md to understand our approach
+# Initialize context (commands vary based on installation)
+> Please read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md  # Global install
+> Please read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md   # Standalone
 ```
 
 ### 3. Develop Your First Feature
@@ -74,10 +81,12 @@ Transform vague ideas into precise, testable requirements:
 - **Optional**: "WHERE [feature enabled] the system SHALL [add behavior]"
 
 ### Conversational Commands
-Natural language commands that guide refinement:
-- `/analyze` - Understand existing code patterns
+Natural language commands that guide refinement with hierarchical override support:
+- `/analyze [scope]` - Understand existing code patterns  
 - `/refine [aspect]` - Improve specifications through dialogue
-- `/review` - Check quality and completeness
+- `/review [type]` - Check quality and completeness
+
+Commands follow precedence: **project** → **global** → **built-in**
 
 ### Living Documentation
 - Specifications evolve with understanding
@@ -133,72 +142,88 @@ See `EXAMPLE_WORKFLOW.md` for a full authentication feature showing:
 - TDD implementation with guidance
 - Continuous refinement without restarts
 
-## 🛠️ Project Contents
+## 🛠️ Installation Architecture
 
+The framework supports two installation modes with hierarchical override system:
+
+### Global Installation (`~/.claude/`)
+Shared methodology and tools for all projects:
 ```
-.claude/
-├── METHODOLOGY.md         # Core methodology (this framework)
-├── PROJECT_CONTEXT.md     # Your project-specific context
-├── context/               # Accumulated knowledge
-│   ├── patterns.md        # Discovered code patterns
-│   ├── decisions.md       # Architectural decisions
-│   ├── glossary.md        # Domain terminology
-│   └── conventions.md     # Coding standards
-├── commands/              # Conversational commands
-│   ├── analyze.md         # Codebase analysis
-│   ├── refine.md          # Specification refinement
-│   └── review.md          # Quality review
-└── templates/             # Starting points
-    ├── requirements-ears.md
+~/.claude/
+├── METHODOLOGY.md         # Core conversational methodology
+├── CLAUDE.md             # Global Claude configuration
+├── commands/             # Command definitions (can be overridden)
+│   ├── analyze.md        # Codebase analysis
+│   ├── refine.md         # Specification refinement
+│   └── review.md         # Quality review
+└── templates/            # Specification templates (can be overridden)
+    ├── requirements_ears.md
     ├── design-iterative.md
-    └── tasks-contextual.md
+    └── tasks_contextual.md
 ```
 
-### Core Files
-- **METHODOLOGY.md** - Instructs Claude on the conversational methodology
-- **PROJECT_CONTEXT.md** - Template for your project-specific information
-- **install.sh** - Easy installation script
+### Project Setup (`.claude/`)
+Project-specific context and optional overrides:
+```
+project/.claude/
+├── PROJECT_CONTEXT.md     # Project-specific information (always)
+├── CLAUDE.md             # Project Claude configuration  
+├── context/              # Accumulated project knowledge (always)
+│   ├── patterns.md       # Discovered code patterns
+│   ├── decisions.md      # Architectural decisions
+│   ├── glossary.md       # Domain terminology
+│   └── conventions.md    # Coding standards
+├── commands/             # Command overrides (optional)
+│   └── analyze.md        # Custom version supersedes global
+└── templates/            # Template overrides (optional)
+    └── custom-spec.md    # Project-specific templates
+```
 
-### Commands (/commands)
-- **analyze.md** - Extract patterns from existing code
-- **refine.md** - Iteratively improve specifications
-- **review.md** - Check quality and completeness
+### Hierarchical Override System
+**Command Resolution Order:**
+1. **Project-level** (`.claude/commands/`) - highest priority
+2. **Global level** (`~/.claude/commands/`) - fallback  
+3. **Built-in behavior** - default
 
-### Templates (/templates)
-- **requirements-ears.md** - EARS-formatted requirements
-- **design-iterative.md** - Evolving technical design
-- **tasks-contextual.md** - Context-aware task breakdown
-
-### Context Files (/context)
-- **patterns.md** - Discovered code patterns
-- **decisions.md** - Architectural decision record
-- **glossary.md** - Domain terminology
-- **conventions.md** - Coding standards
+This allows safe experimentation and project-specific customization without affecting other projects.
 
 ## 🚀 Getting Started
 
-1. **Install the Framework**
-   ```bash
-   git clone https://github.com/benjamin-rood/context-driven-sdad
-   cd context-driven-sdad
-   ./install.sh --global  # or --project /path/to/project
-   ```
+### Option 1: Global + Project (Recommended)
+```bash
+# Clone and install globally
+git clone https://github.com/benjamin-rood/context-driven-sdad
+cd context-driven-sdad
+./install_script.sh --global
 
-2. **Start Claude Code**
-   ```bash
-   cd your-project
-   claude
-   ```
+# Set up your project (minimal setup)
+./install_script.sh --project /path/to/your/project
+cd /path/to/your/project
 
-3. **Initialize Context**
-   ```
-   Please read .claude/METHODOLOGY.md and PROJECT_CONTEXT.md
-   ```
+# Initialize and start
+./init-claude.sh
+claude
+> Please read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md
+```
 
-4. **Begin Development**
-   ```
-   Let's explore requirements for [your feature]
-   ```
+### Option 2: Standalone Project  
+```bash
+# Clone and install everything in project
+git clone https://github.com/benjamin-rood/context-driven-sdad
+cd context-driven-sdad
+./install_script.sh --project /path/to/your/project
+cd /path/to/your/project
+
+# Initialize and start
+./init-claude.sh
+claude
+> Please read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md
+```
+
+### Begin Development
+```
+> Let's explore requirements for [your feature]
+```
 
 ## 🎓 Learning the Approach
 
@@ -246,14 +271,17 @@ Simply adapt PROJECT_CONTEXT.md to your stack.
 **Q: How is this different from just chatting with Claude?**
 A: It provides structure and methodology while preserving natural conversation. Specifications are built systematically but conversationally.
 
-**Q: Can I use traditional commands too?**
-A: Absolutely! The commands (analyze, refine, review) enhance conversation rather than replace it.
+**Q: Should I use global or standalone installation?**
+A: Global is recommended for multiple projects - it provides shared methodology with minimal per-project setup. Use standalone for single projects or when you can't modify `~/.claude/`.
+
+**Q: How do command overrides work?**
+A: Claude checks project-level commands first, then falls back to global, then built-in behavior. You can customize commands per project without affecting others.
 
 **Q: What if I need to comply with specific standards?**
 A: Add your standards to PROJECT_CONTEXT.md and Claude will follow them throughout.
 
 **Q: How do I handle large projects?**
-A: Break into features, maintain an index in specs/, and reference context across features.
+A: Break into features, maintain context in the `context/` directory, and reference accumulated knowledge across features.
 
 ## 🙏 Contributing
 
@@ -271,249 +299,17 @@ MIT License - Use freely in your projects
 
 ## 💡 Example Conversations
 
-### Starting a Feature
-```
-Human: I need to add payment processing to our app.
+See [EXAMPLE_CONVERSATIONS.md](EXAMPLE_CONVERSATIONS.md) for detailed conversation examples showing:
 
-Claude: Let me understand your payment requirements better:
-- What payment methods do you need to support?
-- Will you process payments directly or use a provider?
-- What currencies and regions do you need to handle?
-- Do you need subscription support or just one-time payments?
+- **Starting a Feature** - How requirements emerge through dialogue
+- **Refining Requirements** - Converting ideas into EARS format
+- **Design Evolution** - Exploring technical approaches together
+- **Test-Driven Implementation** - Writing tests that capture requirements
+- **Handling Context Loss** - Maintaining project knowledge across sessions
+- **Iterative Refinement** - Evolving specifications based on discoveries
+- **Discovery Through Implementation** - Learning that drives requirement updates
+- **Context Building Over Time** - Reusing accumulated knowledge for new features
+- **Continuous Learning** - Performance optimization through conversation
+- **End-of-Session Reflection** - Summarizing progress and planning next steps
 
-Based on your answers, we'll build EARS requirements iteratively...
-```
-
-### Refining Requirements
-```
-Human: Users should be able to save payment methods for future use.
-
-Claude: Let me formalize this into EARS requirements:
-- WHEN a user successfully completes a payment THEN the system SHALL offer to save the payment method
-- WHERE a user opts to save a payment method the system SHALL store a tokenized reference
-- The system SHALL NOT store actual card numbers, only payment provider tokens
-- IF a saved payment method fails THEN the system SHALL prompt for an alternative
-
-Should we also consider:
-- Maximum number of saved payment methods?
-- Default payment method selection?
-- PCI compliance requirements?
-```
-
-### Design Evolution
-```
-Claude: For payment processing, I see three architectural approaches:
-
-1. **Direct Integration** with Stripe/PayPal
-   - Pros: Full control, single vendor
-   - Cons: Complex PCI compliance
-
-2. **Payment Service Abstraction**
-   - Pros: Provider flexibility, cleaner architecture
-   - Cons: Additional complexity layer
-
-3. **Hosted Checkout**
-   - Pros: Minimal PCI scope, quick implementation
-   - Cons: Less control over UX
-
-Given your requirements for saving payment methods and quick implementation, 
-I'd lean toward #1 with Stripe. Their vault handles tokenization securely.
-What are your thoughts?
-```
-
-### Test-Driven Implementation
-```
-Human: Let's implement the payment creation endpoint using TDD.
-
-Claude: Perfect! Let's start with the failing tests. Based on our requirements:
-
-\```python
-async def test_successful_payment_creates_charge():
-    """WHEN valid payment data submitted THEN system SHALL create charge"""
-    response = await client.post("/api/v1/payments", json={
-        "amount": 2999,  # $29.99
-        "currency": "USD",
-        "payment_method_id": "pm_test_123"
-    })
-    
-    assert response.status_code == 200
-    assert response.json()["status"] == "succeeded"
-    assert response.json()["amount"] == 2999
-
-async def test_payment_failure_returns_error():
-    """IF payment fails THEN system SHALL return clear error"""
-    # Test implementation...
-\```
-
-Run these - they should fail. Now let's implement the minimal code to make them pass...
-```
-
-### Handling Context Loss
-```
-Human: Wait, what were our security requirements for payments again?
-
-Claude: Looking back at our conversation, we established these security requirements:
-- PCI DSS compliance through tokenization (never store raw card data)
-- All payment data must be encrypted in transit (HTTPS only)
-- Rate limiting: 10 payment attempts per user per hour
-- Audit logging for all payment operations
-- If suspicious activity detected, require additional verification
-
-We also discussed using Stripe's vault for secure token storage. Should I show how these requirements affect our current implementation?
-```
-
-### Iterative Refinement
-```
-Human: The requirements look good, but I realized we need to handle partial refunds too.
-
-Claude: Good catch! Let me add partial refund requirements to our specification:
-
-**Existing requirement:**
-- WHEN a refund is requested THEN the system SHALL process full refund
-
-**Refined requirements:**
-- WHEN a refund is requested THEN the system SHALL support both full and partial refunds
-- IF partial refund amount exceeds original payment THEN the system SHALL reject with error
-- The system SHALL track cumulative refunds per payment
-- WHERE multiple partial refunds exist the system SHALL NOT exceed original amount
-
-This changes our data model - we'll need a refunds table to track history. Should we also consider:
-- Refund approval workflow?
-- Time limits on refunds?
-- Webhook handling for refund status updates?
-```
-
-### Discovery Through Implementation
-```
-Human: I'm implementing the webhook handler and realized Stripe can send duplicate events.
-
-Claude: Excellent discovery! This is a critical issue. Let's update our requirements and design:
-
-**New Requirements:**
-- The system SHALL process each webhook event exactly once (idempotency)
-- IF duplicate webhook received THEN the system SHALL return success without reprocessing
-- The system SHALL store webhook event IDs with timestamps
-
-**Implementation approach:**
-\```python
-class WebhookHandler:
-    async def handle_stripe_event(self, event_id: str, event_data: dict):
-        # Check if we've seen this event
-        if await self.event_store.exists(event_id):
-            return {"status": "already_processed"}
-        
-        # Process event...
-        # Store event_id
-\```
-
-This is why iterative development works well - implementation reveals requirements!
-```
-
-### Context Building Over Time
-```
-Human: Now I need to add subscription support. Can we build on what we have?
-
-Claude: Absolutely! Let's build on our existing payment infrastructure. From our previous work:
-
-**What we can reuse:**
-- Payment method tokenization and storage
-- Security requirements (PCI compliance, encryption)
-- Webhook handling with idempotency
-- Error handling patterns
-
-**New requirements for subscriptions:**
-- WHEN a user subscribes THEN the system SHALL create recurring payment schedule
-- The system SHALL support multiple subscription tiers
-- WHERE subscription payment fails the system SHALL retry up to 3 times
-- IF all retries fail THEN the system SHALL suspend subscription access
-- WHEN subscription cancelled the system SHALL maintain access until period ends
-
-**Design considerations:**
-Since we chose Stripe, we can use their Subscription API which integrates with our existing payment methods. Should we:
-1. Store subscription state locally and sync with Stripe?
-2. Use Stripe as source of truth with webhooks?
-3. Hybrid approach with caching?
-
-Your thoughts on state management?
-```
-
-### Continuous Learning
-```
-Human: After testing, I noticed our payment processing is slow. Any ideas?
-
-Claude: Let's analyze the payment flow based on what we've built:
-
-Current flow:
-1. Validate input (5ms)
-2. Create Stripe payment intent (200ms) ← Bottleneck
-3. Store in database (20ms)
-4. Send confirmation email (150ms) ← Also slow
-
-Optimization approaches:
-
-**Quick wins:**
-- Make email sending async - don't block payment response
-- Pre-create payment intents for logged-in users
-
-**Architectural changes:**
-- Queue payment processing for better reliability
-- Implement optimistic UI updates
-
-Let me update our design to show the async approach:
-
-\```python
-async def create_payment(self, payment_data: PaymentCreate):
-    # Process payment with Stripe
-    charge = await self.stripe.create_charge(...)
-    
-    # Store in DB
-    await self.db.save_payment(charge)
-    
-    # Queue email (don't await)
-    await self.queue.send("send_payment_email", {
-        "payment_id": charge.id,
-        "user_email": payment_data.email
-    })
-    
-    return charge  # Return immediately
-\```
-
-This maintains our requirements while improving performance. Should we also add performance requirements to our spec?
-```
-
-### End-of-Session Reflection
-```
-Human: I think we've made good progress on payments. What did we accomplish?
-
-Claude: Great session! Here's what we built together:
-
-**Requirements Developed:**
-- ✅ Payment processing with PCI compliance
-- ✅ Payment method storage and reuse
-- ✅ Comprehensive error handling
-- ✅ Refund support (full and partial)
-- ✅ Webhook idempotency
-- ✅ Subscription framework
-
-**Key Decisions Made:**
-- Chose Stripe for payment provider (tokenization, vault)
-- Async email sending for performance
-- Separate refunds table for audit trail
-- Event-driven architecture for webhooks
-
-**Patterns Established:**
-- EARS requirements format
-- TDD implementation approach
-- Iterative refinement based on discoveries
-- Performance optimization strategies
-
-**Still To Do:**
-- Implement subscription webhooks
-- Add payment analytics
-- Create admin dashboard
-- Load test the payment endpoints
-
-The specifications we created are living documents - they evolved as we discovered new requirements through implementation. This conversation becomes valuable context for future work on the payment system.
-
-Ready to tackle subscriptions in our next session?
-``
+These examples demonstrate the natural flow of context-driven development, where specifications evolve through understanding rather than rigid planning phases.
