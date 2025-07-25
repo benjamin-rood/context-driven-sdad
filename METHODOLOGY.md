@@ -137,6 +137,23 @@ Given your requirements for [context], I'd lean toward #1 because...
 What are your thoughts?"
 ```
 
+## Core Development Requirements
+
+### Incremental Development Process
+All development MUST follow these principles:
+- **Work in smallest possible chunks** - Break down complex features into minimal testable increments
+- **Interactive feedback loops** - Present each small increment for validation before proceeding to the next
+- **Test foundational assumptions first** - Begin with basic validation (e.g., query execution) before building complex logic
+- **One success criteria at a time** - Focus on validating single, specific outcomes per iteration
+- **Progressive complexity** - Start with simplest possible implementation, then add complexity based on validated learnings
+
+### Living Specification Management
+Specifications MUST be actively maintained:
+- **Continuously refine specifications** - Update .spec.md files based on dialogue and discoveries rather than relying on memory
+- **Document architectural learnings** - Capture insights about existing codebase structure and patterns in specifications
+- **Update context with new requirements** - Incorporate user feedback and requirements changes into specification documents
+- **Maintain specification accuracy** - Ensure specifications reflect current understanding and implementation decisions
+
 ## Implementation Approaches
 
 ### Test-Driven Development (TDD)
