@@ -181,28 +181,7 @@ EOF
         fi
     else
         print_info "Creating global CLAUDE.md with methodology reference..."
-        cat > "$install_path/CLAUDE.md" << 'EOF'
-# Claude Code Configuration
-
-## Context-Driven Spec Development
-
-Please read the METHODOLOGY.md file in this directory for the complete development methodology and approach.
-
-This methodology emphasizes conversational specification building, EARS requirements format, and context accumulation across development sessions.
-
-## Global Installation
-
-This is a global installation providing shared methodology, commands, and templates for all projects.
-
-Individual projects can override commands and templates by placing them in their local `.claude/` directories.
-
-## Usage
-
-In any project:
-1. Create `.claude/` directory with PROJECT_CONTEXT.md
-2. Start Claude Code and reference this methodology
-3. Use hierarchical command system (project overrides global)
-EOF
+        cp "$SCRIPT_DIR/claude_header_template.global.md" "$install_path/CLAUDE.md"
     fi
     
     print_success "Global methodology installed successfully!"
@@ -347,90 +326,13 @@ EOF
         cp "$SCRIPT_DIR/templates/"*.md "$install_path/templates/" 2>/dev/null || true
         
         # Create project CLAUDE.md at project root that references local files
-        cat > "$project_path/CLAUDE.md" << 'EOF'
-# CLAUDE.md
-
-This file provides guidance to Claude Code when working with this project.
-
-## Context-Driven Spec Development
-
-Please read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md to understand the approach.
-
-## Standalone Project Setup
-
-This is a standalone project installation with complete methodology included locally in the `.claude/` directory.
-
-## Hierarchical Override System
-
-Commands and templates follow this precedence:
-1. Project-level (.claude/commands/, .claude/templates/) - highest priority
-2. Built-in behavior - fallback
-
-When using commands like `/analyze`, `/refine`, `/review`, Claude will check:
-- `.claude/commands/` first (project-specific versions)
-- Built-in behavior if not found locally
-
-## Usage
-
-1. Read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md to understand the approach
-2. Use commands like `/analyze`, `/refine`, `/review` for guided development
-3. Accumulate knowledge in the `.claude/context/` directory
-4. Customize commands and templates in `.claude/` directories as needed
-
-## File Structure
-
-- `.claude/METHODOLOGY.md` - Core development methodology
-- `.claude/PROJECT_CONTEXT.md` - Project-specific context (fill this in)
-- `.claude/context/` - Accumulated project knowledge
-- `.claude/commands/` - Command definitions (can be customized)
-- `.claude/templates/` - Specification templates (can be customized)
-EOF
+        cp "$SCRIPT_DIR/claude_header_template.project_standalone.md" "$project_path/CLAUDE.md"
     else
         # Minimal installation with global methodology reference
         print_info "Installing minimal project setup (using global methodology)..."
         
         # Create project CLAUDE.md at project root that references both global and local
-        cat > "$project_path/CLAUDE.md" << 'EOF'
-# CLAUDE.md
-
-This file provides guidance to Claude Code when working with this project.
-
-## Context-Driven Spec Development
-
-Please read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md to understand the approach.
-
-## Global + Project Setup
-
-This project uses the global Context-Driven Spec Development methodology with project-specific context.
-
-## Hierarchical Override System
-
-Commands and templates follow this precedence:
-1. Project-level (`.claude/commands/`, `.claude/templates/`) - highest priority
-2. Global level (`~/.claude/commands/`, `~/.claude/templates/`) - fallback
-3. Built-in behavior - default
-
-When using commands like `/analyze`, `/refine`, `/review`, Claude will check:
-- `.claude/commands/` first (project-specific overrides)
-- `~/.claude/commands/` second (global defaults)
-- Built-in behavior if not found in either location
-
-## Usage
-
-1. Read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md to understand the approach
-2. Use commands like `/analyze`, `/refine`, `/review` for guided development
-3. Accumulate knowledge in the `.claude/context/` directory
-4. Override global commands/templates by placing custom versions in `.claude/` directories
-
-## File Structure
-
-- `.claude/PROJECT_CONTEXT.md` - Project-specific context (fill this in)
-- `.claude/context/` - Accumulated project knowledge
-- `.claude/commands/` - Project-specific command overrides (optional)
-- `.claude/templates/` - Project-specific template overrides (optional)
-
-Global methodology files are available in `~/.claude/`
-EOF
+        cp "$SCRIPT_DIR/claude_header_template.project_global.md" "$project_path/CLAUDE.md"
     fi
     
     # Create project initialization script
