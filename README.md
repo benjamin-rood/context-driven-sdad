@@ -191,6 +191,12 @@ This allows safe experimentation and project-specific customization without affe
 
 The installation script shows exactly what files will be created before making any changes.
 
+**💾 Existing CLAUDE.md Files:** If you already have a `CLAUDE.md` file (global or project), the installer will:
+- Create a backup (`.backup` extension) 
+- Prepend our methodology content to your existing file
+- Preserve all your existing configuration
+- **Keep the backup file** for your safety (remove manually when satisfied)
+
 ### Option 1: Global + Project (Recommended)
 
 **Step 1: Global Installation**

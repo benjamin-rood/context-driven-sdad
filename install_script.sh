@@ -177,7 +177,6 @@ This methodology emphasizes conversational specification building, EARS requirem
 EOF
             cat "$install_path/CLAUDE.md.backup" >> "$install_path/CLAUDE.md.temp"
             mv "$install_path/CLAUDE.md.temp" "$install_path/CLAUDE.md"
-            rm "$install_path/CLAUDE.md.backup"
         fi
     else
         print_info "Creating global CLAUDE.md with methodology reference..."
@@ -325,14 +324,50 @@ EOF
         cp "$SCRIPT_DIR/commands/"*.md "$install_path/commands/" 2>/dev/null || true
         cp "$SCRIPT_DIR/templates/"*.md "$install_path/templates/" 2>/dev/null || true
         
-        # Create project CLAUDE.md at project root that references local files
-        cp "$SCRIPT_DIR/claude_header_template.project_standalone.md" "$project_path/CLAUDE.md"
+        # Handle project CLAUDE.md at project root
+        if [[ -f "$project_path/CLAUDE.md" ]]; then
+            print_info "Updating existing project CLAUDE.md with methodology reference..."
+            
+            # Check if it already has our methodology reference
+            if ! grep -q "Context-Driven Spec Development" "$project_path/CLAUDE.md"; then
+                # Backup existing and prepend methodology reference
+                cp "$project_path/CLAUDE.md" "$project_path/CLAUDE.md.backup"
+                
+                cat "$SCRIPT_DIR/claude_header_template.project_standalone.md" > "$project_path/CLAUDE.md.temp"
+                echo "" >> "$project_path/CLAUDE.md.temp"
+                echo "---" >> "$project_path/CLAUDE.md.temp"
+                echo "" >> "$project_path/CLAUDE.md.temp"
+                cat "$project_path/CLAUDE.md.backup" >> "$project_path/CLAUDE.md.temp"
+                mv "$project_path/CLAUDE.md.temp" "$project_path/CLAUDE.md"
+            fi
+        else
+            print_info "Creating project CLAUDE.md with methodology reference..."
+            cp "$SCRIPT_DIR/claude_header_template.project_standalone.md" "$project_path/CLAUDE.md"
+        fi
     else
         # Minimal installation with global methodology reference
         print_info "Installing minimal project setup (using global methodology)..."
         
-        # Create project CLAUDE.md at project root that references both global and local
-        cp "$SCRIPT_DIR/claude_header_template.project_global.md" "$project_path/CLAUDE.md"
+        # Handle project CLAUDE.md at project root
+        if [[ -f "$project_path/CLAUDE.md" ]]; then
+            print_info "Updating existing project CLAUDE.md with methodology reference..."
+            
+            # Check if it already has our methodology reference
+            if ! grep -q "Context-Driven Spec Development" "$project_path/CLAUDE.md"; then
+                # Backup existing and prepend methodology reference
+                cp "$project_path/CLAUDE.md" "$project_path/CLAUDE.md.backup"
+                
+                cat "$SCRIPT_DIR/claude_header_template.project_global.md" > "$project_path/CLAUDE.md.temp"
+                echo "" >> "$project_path/CLAUDE.md.temp"
+                echo "---" >> "$project_path/CLAUDE.md.temp"
+                echo "" >> "$project_path/CLAUDE.md.temp"
+                cat "$project_path/CLAUDE.md.backup" >> "$project_path/CLAUDE.md.temp"
+                mv "$project_path/CLAUDE.md.temp" "$project_path/CLAUDE.md"
+            fi
+        else
+            print_info "Creating project CLAUDE.md with methodology reference..."
+            cp "$SCRIPT_DIR/claude_header_template.project_global.md" "$project_path/CLAUDE.md"
+        fi
     fi
     
     # Create project initialization script
