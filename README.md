@@ -189,39 +189,103 @@ This allows safe experimentation and project-specific customization without affe
 
 ## 🚀 Getting Started
 
+The installation script shows exactly what files will be created before making any changes.
+
 ### Option 1: Global + Project (Recommended)
+
+**Step 1: Global Installation**
 ```bash
-# Clone and install globally
 git clone https://github.com/benjamin-rood/context-driven-sdad
 cd context-driven-sdad
 ./install_script.sh --global
-
-# Set up your project (minimal setup)
-./install_script.sh --project /path/to/your/project
-cd /path/to/your/project
-
-# Initialize and start
-./init-claude.sh
-claude
-> Please read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md
 ```
 
-### Option 2: Standalone Project  
+**Files created:**
+```
+~/
+├── .claude/
+│   ├── METHODOLOGY.md           # Core conversational methodology
+│   ├── CLAUDE.md               # Global configuration (updated)
+│   ├── commands/
+│   │   ├── analyze.md          # Codebase analysis
+│   │   ├── refine.md           # Specification refinement
+│   │   └── review.md           # Quality review
+│   └── templates/
+│       ├── requirements_ears.md
+│       ├── design-iterative.md
+│       └── tasks_contextual.md
+└── uninstall-claude-sdd-global.sh
+```
+
+**Step 2: Project Setup**
 ```bash
-# Clone and install everything in project
+./install_script.sh --project /path/to/your/project
+cd /path/to/your/project
+```
+
+**Files created (minimal setup):**
+```
+your-project/
+├── CLAUDE.md                   # Project Claude configuration
+├── .claude/
+│   ├── PROJECT_CONTEXT.md      # Project context template
+│   ├── context/
+│   │   ├── patterns.md         # Code patterns (empty)
+│   │   ├── decisions.md        # Architectural decisions (empty)
+│   │   ├── glossary.md         # Domain terms (empty)
+│   │   └── conventions.md      # Coding standards (empty)
+│   ├── commands/               # Empty (for overrides)
+│   └── templates/              # Empty (for overrides)
+├── init-claude.sh              # Session helper
+└── uninstall-claude-sdd.sh
+```
+
+### Option 2: Standalone Project
+
+```bash
 git clone https://github.com/benjamin-rood/context-driven-sdad
 cd context-driven-sdad
 ./install_script.sh --project /path/to/your/project
-cd /path/to/your/project
+```
 
-# Initialize and start
+**Files created (complete setup):**
+```
+your-project/
+├── CLAUDE.md                   # Project Claude configuration
+├── .claude/
+│   ├── METHODOLOGY.md          # Complete methodology (local)
+│   ├── PROJECT_CONTEXT.md      # Project context template
+│   ├── context/
+│   │   ├── patterns.md         # Code patterns (empty)
+│   │   ├── decisions.md        # Architectural decisions (empty)
+│   │   ├── glossary.md         # Domain terms (empty)
+│   │   └── conventions.md      # Coding standards (empty)
+│   ├── commands/
+│   │   ├── analyze.md          # Codebase analysis
+│   │   ├── refine.md           # Specification refinement
+│   │   └── review.md           # Quality review
+│   └── templates/
+│       ├── requirements_ears.md
+│       ├── design-iterative.md
+│       └── tasks_contextual.md
+├── init-claude.sh              # Session helper
+└── uninstall-claude-sdd.sh
+```
+
+### Start Development
+
+```bash
+# Use the helper script for guidance
 ./init-claude.sh
-claude
-> Please read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md
-```
 
-### Begin Development
-```
+# Start Claude Code
+claude
+
+# Initialize context (path varies by installation type)
+> Please read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md  # Global
+> Please read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md   # Standalone
+
+# Begin feature development  
 > Let's explore requirements for [your feature]
 ```
 

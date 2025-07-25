@@ -112,12 +112,27 @@ check_global_methodology() {
 install_global() {
     local install_path="$HOME/.claude"
     
-    print_info "Installing global methodology to $install_path"
+    print_info "Global installation will create/modify:"
+    echo "  • $install_path/METHODOLOGY.md"
+    echo "  • $install_path/CLAUDE.md (updated with methodology reference)"
+    echo "  • $install_path/commands/ (analyze.md, refine.md, review.md)"
+    echo "  • $install_path/templates/ (requirements, design, tasks templates)"
+    echo "  • $HOME/uninstall-claude-sdd-global.sh (uninstaller)"
+    echo ""
+    
+    if [[ "$FORCE" == false ]]; then
+        read -p "Continue with global installation? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            print_info "Installation cancelled"
+            exit 0
+        fi
+    fi
     
     # Handle existing installation
     if [[ -d "$install_path" ]] && [[ "$FORCE" == false ]]; then
         print_warning "Global installation already exists at $install_path"
-        read -p "Do you want to overwrite? (y/N) " -n 1 -r
+        read -p "Do you want to overwrite existing files? (y/N) " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             print_info "Installation cancelled"
@@ -214,9 +229,35 @@ install_project() {
     if check_global_methodology; then
         has_global=true
         print_info "Global methodology detected - installing minimal project setup"
+        print_info "Project installation will create/modify:"
+        echo "  • $project_path/CLAUDE.md (project Claude configuration)"
+        echo "  • $install_path/PROJECT_CONTEXT.md (project context template)"
+        echo "  • $install_path/context/ (patterns.md, decisions.md, glossary.md, conventions.md)"
+        echo "  • $install_path/commands/ and $install_path/templates/ (empty, for overrides)"
+        echo "  • $project_path/init-claude.sh (session initialization helper)"
+        echo "  • $project_path/uninstall-claude-sdd.sh (uninstaller)"
     else
         has_global=false
         print_info "No global methodology found - installing complete standalone setup"
+        print_info "Standalone installation will create/modify:"
+        echo "  • $project_path/CLAUDE.md (project Claude configuration)"
+        echo "  • $install_path/METHODOLOGY.md (complete methodology)"
+        echo "  • $install_path/PROJECT_CONTEXT.md (project context template)"
+        echo "  • $install_path/context/ (patterns.md, decisions.md, glossary.md, conventions.md)"
+        echo "  • $install_path/commands/ (analyze.md, refine.md, review.md)"
+        echo "  • $install_path/templates/ (requirements, design, tasks templates)"
+        echo "  • $project_path/init-claude.sh (session initialization helper)"
+        echo "  • $project_path/uninstall-claude-sdd.sh (uninstaller)"
+    fi
+    echo ""
+    
+    if [[ "$FORCE" == false ]]; then
+        read -p "Continue with project installation? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            print_info "Installation cancelled"
+            exit 0
+        fi
     fi
     
     # Handle existing installation
@@ -305,50 +346,60 @@ EOF
         cp "$SCRIPT_DIR/commands/"*.md "$install_path/commands/" 2>/dev/null || true
         cp "$SCRIPT_DIR/templates/"*.md "$install_path/templates/" 2>/dev/null || true
         
-        # Create project CLAUDE.md that references local files
-        cat > "$install_path/CLAUDE.md" << 'EOF'
+        # Create project CLAUDE.md at project root that references local files
+        cat > "$project_path/CLAUDE.md" << 'EOF'
 # CLAUDE.md
 
 This file provides guidance to Claude Code when working with this project.
 
 ## Context-Driven Spec Development
 
-Please read the METHODOLOGY.md file in this directory for the complete development methodology.
+Please read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md to understand the approach.
 
-## Project Setup
+## Standalone Project Setup
 
-This is a standalone project installation with complete methodology included locally.
+This is a standalone project installation with complete methodology included locally in the `.claude/` directory.
+
+## Hierarchical Override System
+
+Commands and templates follow this precedence:
+1. Project-level (.claude/commands/, .claude/templates/) - highest priority
+2. Built-in behavior - fallback
+
+When using commands like `/analyze`, `/refine`, `/review`, Claude will check:
+- `.claude/commands/` first (project-specific versions)
+- Built-in behavior if not found locally
 
 ## Usage
 
-1. Read METHODOLOGY.md and PROJECT_CONTEXT.md to understand the approach
+1. Read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md to understand the approach
 2. Use commands like `/analyze`, `/refine`, `/review` for guided development
-3. Accumulate knowledge in the `context/` directory
-4. Customize commands and templates in local directories as needed
+3. Accumulate knowledge in the `.claude/context/` directory
+4. Customize commands and templates in `.claude/` directories as needed
 
 ## File Structure
 
-- `METHODOLOGY.md` - Core development methodology
-- `PROJECT_CONTEXT.md` - Project-specific context (fill this in)
-- `context/` - Accumulated project knowledge
-- `commands/` - Command definitions (can be customized)
-- `templates/` - Specification templates (can be customized)
+- `.claude/METHODOLOGY.md` - Core development methodology
+- `.claude/PROJECT_CONTEXT.md` - Project-specific context (fill this in)
+- `.claude/context/` - Accumulated project knowledge
+- `.claude/commands/` - Command definitions (can be customized)
+- `.claude/templates/` - Specification templates (can be customized)
 EOF
     else
         # Minimal installation with global methodology reference
         print_info "Installing minimal project setup (using global methodology)..."
         
-        # Create project CLAUDE.md that references both global and local
-        cat > "$install_path/CLAUDE.md" << 'EOF'
+        # Create project CLAUDE.md at project root that references both global and local
+        cat > "$project_path/CLAUDE.md" << 'EOF'
 # CLAUDE.md
 
 This file provides guidance to Claude Code when working with this project.
 
 ## Context-Driven Spec Development
 
-Please read the METHODOLOGY.md file in ~/.claude/ for the complete development methodology.
+Please read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md to understand the approach.
 
-## Project Setup
+## Global + Project Setup
 
 This project uses the global Context-Driven Spec Development methodology with project-specific context.
 
@@ -357,20 +408,26 @@ This project uses the global Context-Driven Spec Development methodology with pr
 Commands and templates follow this precedence:
 1. Project-level (`.claude/commands/`, `.claude/templates/`) - highest priority
 2. Global level (`~/.claude/commands/`, `~/.claude/templates/`) - fallback
+3. Built-in behavior - default
+
+When using commands like `/analyze`, `/refine`, `/review`, Claude will check:
+- `.claude/commands/` first (project-specific overrides)
+- `~/.claude/commands/` second (global defaults)
+- Built-in behavior if not found in either location
 
 ## Usage
 
-1. Read ~/.claude/METHODOLOGY.md and local PROJECT_CONTEXT.md to understand the approach
+1. Read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md to understand the approach
 2. Use commands like `/analyze`, `/refine`, `/review` for guided development
-3. Accumulate knowledge in the local `context/` directory
-4. Override global commands/templates by placing custom versions in local directories
+3. Accumulate knowledge in the `.claude/context/` directory
+4. Override global commands/templates by placing custom versions in `.claude/` directories
 
 ## File Structure
 
-- `PROJECT_CONTEXT.md` - Project-specific context (fill this in)
-- `context/` - Accumulated project knowledge
-- `commands/` - Project-specific command overrides (optional)
-- `templates/` - Project-specific template overrides (optional)
+- `.claude/PROJECT_CONTEXT.md` - Project-specific context (fill this in)
+- `.claude/context/` - Accumulated project knowledge
+- `.claude/commands/` - Project-specific command overrides (optional)
+- `.claude/templates/` - Project-specific template overrides (optional)
 
 Global methodology files are available in `~/.claude/`
 EOF
