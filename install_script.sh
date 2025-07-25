@@ -208,8 +208,8 @@ install_project() {
         has_global=true
         print_info "Global methodology detected - installing minimal project setup"
         print_info "Project installation will create/modify:"
-        echo "  • $project_path/CLAUDE.md (project Claude configuration)"
-        echo "  • $install_path/PROJECT_CONTEXT.md (project context template)"
+        echo "  • $project_path/CLAUDE.md (methodology reference - existing content moved to PROJECT_CONTEXT.md)"
+        echo "  • $install_path/PROJECT_CONTEXT.md (existing CLAUDE.md content will be moved here)"
         echo "  • $install_path/context/ (patterns.md, decisions.md, glossary.md, conventions.md)"
         echo "  • $install_path/commands/ and $install_path/templates/ (empty, for overrides)"
         echo "  • $project_path/init-claude.sh (session initialization helper)"
@@ -218,9 +218,9 @@ install_project() {
         has_global=false
         print_info "No global methodology found - installing complete standalone setup"
         print_info "Standalone installation will create/modify:"
-        echo "  • $project_path/CLAUDE.md (project Claude configuration)"
+        echo "  • $project_path/CLAUDE.md (methodology reference - existing content moved to PROJECT_CONTEXT.md)"
         echo "  • $install_path/METHODOLOGY.md (complete methodology)"
-        echo "  • $install_path/PROJECT_CONTEXT.md (project context template)"
+        echo "  • $install_path/PROJECT_CONTEXT.md (existing CLAUDE.md content will be moved here)"
         echo "  • $install_path/context/ (patterns.md, decisions.md, glossary.md, conventions.md)"
         echo "  • $install_path/commands/ (analyze.md, refine.md, review.md)"
         echo "  • $install_path/templates/ (requirements, design, tasks templates)"
@@ -330,15 +330,14 @@ EOF
             
             # Check if it already has our methodology reference
             if ! grep -q "Context-Driven Spec Development" "$project_path/CLAUDE.md"; then
-                # Backup existing and prepend methodology reference
+                # Backup existing CLAUDE.md and move content to PROJECT_CONTEXT.md
                 cp "$project_path/CLAUDE.md" "$project_path/CLAUDE.md.backup"
-                
-                cat "$SCRIPT_DIR/claude_header_template.project_standalone.md" > "$project_path/CLAUDE.md.temp"
-                echo "" >> "$project_path/CLAUDE.md.temp"
-                echo "---" >> "$project_path/CLAUDE.md.temp"
-                echo "" >> "$project_path/CLAUDE.md.temp"
-                cat "$project_path/CLAUDE.md.backup" >> "$project_path/CLAUDE.md.temp"
-                mv "$project_path/CLAUDE.md.temp" "$project_path/CLAUDE.md"
+
+                # Move existing content to PROJECT_CONTEXT.md
+                cat "$project_path/CLAUDE.md.backup" > "$install_path/PROJECT_CONTEXT.md"
+
+                # Create new CLAUDE.md with methodology reference
+                cp "$SCRIPT_DIR/claude_header_template.project_standalone.md" "$project_path/CLAUDE.md"
             fi
         else
             print_info "Creating project CLAUDE.md with methodology reference..."
@@ -354,15 +353,14 @@ EOF
             
             # Check if it already has our methodology reference
             if ! grep -q "Context-Driven Spec Development" "$project_path/CLAUDE.md"; then
-                # Backup existing and prepend methodology reference
+                # Backup existing CLAUDE.md and move content to PROJECT_CONTEXT.md
                 cp "$project_path/CLAUDE.md" "$project_path/CLAUDE.md.backup"
-                
-                cat "$SCRIPT_DIR/claude_header_template.project_global.md" > "$project_path/CLAUDE.md.temp"
-                echo "" >> "$project_path/CLAUDE.md.temp"
-                echo "---" >> "$project_path/CLAUDE.md.temp"
-                echo "" >> "$project_path/CLAUDE.md.temp"
-                cat "$project_path/CLAUDE.md.backup" >> "$project_path/CLAUDE.md.temp"
-                mv "$project_path/CLAUDE.md.temp" "$project_path/CLAUDE.md"
+
+                # Move existing content to PROJECT_CONTEXT.md
+                cat "$project_path/CLAUDE.md.backup" > "$install_path/PROJECT_CONTEXT.md"
+
+                # Create new CLAUDE.md with methodology reference
+                cp "$SCRIPT_DIR/claude_header_template.project_global.md" "$project_path/CLAUDE.md"
             fi
         else
             print_info "Creating project CLAUDE.md with methodology reference..."

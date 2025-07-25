@@ -165,18 +165,19 @@ Shared methodology and tools for all projects:
 ### Project Setup (`.claude/`)
 Project-specific context and optional overrides:
 ```
-project/.claude/
-├── PROJECT_CONTEXT.md     # Project-specific information (always)
-├── CLAUDE.md             # Project Claude configuration  
-├── context/              # Accumulated project knowledge (always)
-│   ├── patterns.md       # Discovered code patterns
-│   ├── decisions.md      # Architectural decisions
-│   ├── glossary.md       # Domain terminology
-│   └── conventions.md    # Coding standards
-├── commands/             # Command overrides (optional)
-│   └── analyze.md        # Custom version supersedes global
-└── templates/            # Template overrides (optional)
-    └── custom-spec.md    # Project-specific templates
+project/
+├── CLAUDE.md             # Project Claude configuration (methodology reference)
+└── .claude/
+    ├── PROJECT_CONTEXT.md     # Project-specific information (always)
+    ├── context/              # Accumulated project knowledge (always)
+    │   ├── patterns.md       # Discovered code patterns
+    │   ├── decisions.md      # Architectural decisions
+    │   ├── glossary.md       # Domain terminology
+    │   └── conventions.md    # Coding standards
+    ├── commands/             # Command overrides (optional)
+    │   └── analyze.md        # Custom version supersedes global
+    └── templates/            # Template overrides (optional)
+        └── custom-spec.md    # Project-specific templates
 ```
 
 ### Hierarchical Override System
@@ -191,11 +192,13 @@ This allows safe experimentation and project-specific customization without affe
 
 The installation script shows exactly what files will be created before making any changes.
 
-**💾 Existing CLAUDE.md Files:** If you already have a `CLAUDE.md` file (global or project), the installer will:
+**💾 Existing CLAUDE.md Files:** If you already have a `CLAUDE.md` file in your project, the installer will:
 - Create a backup (`.backup` extension) 
-- Prepend our methodology content to your existing file
-- Preserve all your existing configuration
+- **Move existing content to `.claude/PROJECT_CONTEXT.md`** (where project context belongs)
+- Replace CLAUDE.md with framework methodology reference
 - **Keep the backup file** for your safety (remove manually when satisfied)
+
+This separation ensures CLAUDE.md contains methodology while PROJECT_CONTEXT.md contains your project-specific information.
 
 ### Option 1: Global + Project (Recommended)
 
