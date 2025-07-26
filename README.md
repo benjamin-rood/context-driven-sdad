@@ -152,7 +152,7 @@ The framework supports two installation modes with hierarchical override system:
 Shared methodology and tools for all projects:
 ```
 ~/.claude/
-├── METHODOLOGY.md         # Core conversational methodology
+├── METHODOLOGY.md        # Core conversational methodology
 ├── CLAUDE.md             # Global Claude configuration
 ├── commands/             # Command definitions (can be overridden)
 │   ├── analyze.md        # Codebase analysis
@@ -170,7 +170,7 @@ Project-specific context and optional overrides:
 project/
 ├── CLAUDE.md             # Project Claude configuration (methodology reference)
 └── .claude/
-    ├── PROJECT_CONTEXT.md     # Project-specific information (always)
+    ├── PROJECT_CONTEXT.md    # Project-specific information (always)
     ├── context/              # Accumulated project knowledge (always)
     │   ├── patterns.md       # Discovered code patterns
     │   ├── decisions.md      # Architectural decisions
@@ -215,7 +215,7 @@ cd context-driven-sdad
 ```
 ~/
 ├── .claude/
-│   ├── METHODOLOGY.md           # Core conversational methodology
+│   ├── METHODOLOGY.md          # Core conversational methodology
 │   ├── CLAUDE.md               # Global configuration (updated)
 │   ├── commands/
 │   │   ├── analyze.md          # Codebase analysis
