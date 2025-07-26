@@ -8,14 +8,16 @@ _( I don't know if this approach is better, but my goal is to use both @marcelsu
 
 I have effectively been using a soft type of  [Spec-Driven Development](https://www.researchgate.net/publication/221592745_Agile_Specification-Driven_Development) with Claude since Autumn 2024 without knowing the proper terminology for it. With the public announcement of Kiro in July 2025 I had the concrete definition of the methodology I had intuitively found worked for me.
 
-This framework treats Claude Code as a thinking partner rather than a command executor. Instead of rigid phases and commands, it emphasizes:
+This framework treats Claude Code as a collaborative partner who maintains spec-driven discipline while enabling natural conversation. Claude acts as the disciplined partner who ensures methodology rigor while you drive the conversation freely.
 
+### Core Principles:
+- **Proactive Spec Management**: Claude automatically creates and maintains `.spec.md` files
 - **Continuous Context**: Understanding builds throughout the conversation
 - **Natural Dialogue**: Work with Claude like a senior colleague
 - **Incremental Development**: Work in smallest possible chunks with interactive feedback loops
 - **Living Specifications**: Specifications continuously evolve and stay accurate
-- **Iterative Refinement**: Requirements and designs improve through dialogue
-- **Flexible Process**: Adapt to your project's needs
+- **Session Continuity**: Progress tracking and handoffs between development sessions
+- **Workflow Enforcement**: Requirements → Design → Tests → Implementation discipline
 
 ## 🚀 Quick Start
 
@@ -55,18 +57,66 @@ claude
 
 ### 3. Develop Your First Feature
 
-(Example conversation flow)
+(Example conversation flow with automatic spec management)
 ```
 > Let's develop user authentication. First, help me understand what we need to consider.
 
+→ Claude automatically creates specs/authentication/authentication.spec.md
+→ Claude asks clarifying questions while updating the spec
+→ Requirements emerge through dialogue and are captured in real-time
+
 > Based on our discussion, let's formalize these into EARS requirements.
+
+→ Claude converts discussion into EARS format in the spec file
+→ You provide feedback and refinements
+→ Spec file continuously updated with each decision
 
 > Now let's explore technical approaches for implementing these requirements.
 
-> Can you create test specifications that cover all our requirements?
+→ Claude presents options while documenting in Architecture Decisions
+→ Design rationale captured as you make choices together
+→ Implementation phases defined with success criteria
 
-> Let's break this into implementation tasks we can tackle incrementally.
+> Let's start implementing the login endpoint.
+
+→ Claude checks spec completeness before coding
+→ Implementation follows the documented phases
+→ Progress tracked in spec file for session continuity
 ```
+
+## 🔧 How Claude Manages Specifications
+
+### Automatic Specification Creation
+Claude proactively creates and maintains specifications without being asked:
+
+- **Triggers**: Any mention of "implement", "build", "create", "add feature", "need", "want", "fix", "improve"
+- **Location**: `specs/[feature-name]/[feature-name].spec.md`
+- **Content**: Comprehensive template with status tracking, requirements, design decisions, and implementation phases
+- **Updates**: Real-time as the conversation evolves
+
+### Workflow Enforcement
+Even in natural conversation, Claude maintains discipline:
+
+```
+Human: "Let's code the login endpoint"
+Claude: "Before we implement, let me check our specifications...
+
+*Checking: specs/authentication/authentication.spec.md*
+
+✅ Requirements documented (5 functional, 3 non-functional)
+✅ Architecture decisions captured
+⚠️ Test specifications need more detail
+
+Let me quickly update the test cases before we start coding."
+```
+
+### Session Continuity
+Specs preserve context across development sessions:
+
+- **Progress Tracking**: Implementation phases with checkboxes
+- **Status Indicators**: 🟡 In Progress, ✅ Complete, 🔄 Needs Update, 🔴 Blocked  
+- **Session Summaries**: What was accomplished, what's next
+- **Context Handoffs**: Key information for resuming work
 
 ## 🎨 Key Features
 
@@ -164,22 +214,28 @@ Shared methodology and tools for all projects:
     └── tasks_contextual.md
 ```
 
-### Project Setup (`.claude/`)
+### Project Setup (`.claude/` + `specs/`)
 Project-specific context and optional overrides:
 ```
 project/
 ├── CLAUDE.md             # Project Claude configuration (methodology reference)
-└── .claude/
-    ├── PROJECT_CONTEXT.md    # Project-specific information (always)
-    ├── context/              # Accumulated project knowledge (always)
-    │   ├── patterns.md       # Discovered code patterns
-    │   ├── decisions.md      # Architectural decisions
-    │   ├── glossary.md       # Domain terminology
-    │   └── conventions.md    # Coding standards
-    ├── commands/             # Command overrides (optional)
-    │   └── analyze.md        # Custom version supersedes global
-    └── templates/            # Template overrides (optional)
-        └── custom-spec.md    # Project-specific templates
+├── .claude/
+│   ├── PROJECT_CONTEXT.md    # Project-specific information (always)
+│   ├── context/              # Accumulated project knowledge (always)
+│   │   ├── patterns.md       # Discovered code patterns
+│   │   ├── decisions.md      # Architectural decisions
+│   │   ├── glossary.md       # Domain terminology
+│   │   └── conventions.md    # Coding standards
+│   ├── commands/             # Command overrides (optional)
+│   │   └── analyze.md        # Custom version supersedes global
+│   └── templates/            # Template overrides (optional)
+│       └── custom-spec.md    # Project-specific templates
+└── specs/                    # Feature specifications (auto-created by Claude)
+    ├── authentication/
+    │   ├── authentication.spec.md  # Comprehensive specification
+    │   └── history/                 # Optional: significant versions
+    └── user-management/
+        └── user-management.spec.md
 ```
 
 ### Hierarchical Override System
@@ -345,7 +401,13 @@ Simply adapt PROJECT_CONTEXT.md to your stack.
 ## 🤔 FAQ
 
 **Q: How is this different from just chatting with Claude?**
-A: It provides structure and methodology while preserving natural conversation. Specifications are built systematically but conversationally.
+A: Claude proactively maintains discipline by automatically creating specifications, enforcing workflow order (requirements → design → tests → implementation), and preserving context across sessions. It's like having a senior developer who insists on proper documentation while remaining conversational.
+
+**Q: Will Claude automatically create specification files?**
+A: Yes! Whenever you mention implementing, building, or creating features, Claude automatically creates comprehensive `.spec.md` files in the `specs/` directory and updates them throughout your conversation.
+
+**Q: What if I just want to code without specs?**
+A: Claude will gently redirect you to create specifications first, but remains helpful and conversational. The methodology is designed to feel natural while maintaining necessary discipline.
 
 **Q: Should I use global or standalone installation?**
 A: Global is recommended for multiple projects - it provides shared methodology with minimal per-project setup. Use standalone for single projects or when you can't modify `~/.claude/`.
@@ -354,10 +416,13 @@ A: Global is recommended for multiple projects - it provides shared methodology 
 A: Claude checks project-level commands first, then falls back to global, then built-in behavior. You can customize commands per project without affecting others.
 
 **Q: What if I need to comply with specific standards?**
-A: Add your standards to PROJECT_CONTEXT.md and Claude will follow them throughout.
+A: Add your standards to PROJECT_CONTEXT.md and Claude will follow them throughout. The specifications will reflect your compliance requirements.
+
+**Q: How does session continuity work?**
+A: Each specification includes session status updates, progress tracking with checkboxes, and handoff summaries. When you return, Claude reads the spec status and continues from where you left off.
 
 **Q: How do I handle large projects?**
-A: Break into features, maintain context in the `context/` directory, and reference accumulated knowledge across features.
+A: Break into features with separate spec files, maintain context in the `context/` directory, and reference accumulated knowledge. Each feature gets its own specification for focused development.
 
 ## 🙏 Contributing
 
