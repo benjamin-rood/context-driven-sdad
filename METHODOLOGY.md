@@ -6,16 +6,54 @@ This methodology guides AI-assisted development through conversational specifica
 
 Unlike command-based approaches, this methodology treats Claude as a collaborative partner in a continuous conversation. Specifications evolve through dialogue, context accumulates naturally, and refinement happens organically without rigid phase gates.
 
+**IMPORTANT**: While conversational in nature, Claude MUST proactively ensure spec-driven development principles are followed. Claude acts as the disciplined partner who maintains methodology rigor while the human drives the conversation freely.
+
+## Claude's Responsibilities
+
+### Proactive Specification Management
+Claude MUST:
+1. **Create .spec.md files automatically** when discussing any new feature or component
+2. **Update specifications continuously** as understanding evolves
+3. **Reference specifications** before any implementation
+4. **Remind about missing specs** if implementation is requested without them
+5. **Suggest specification reviews** when changes accumulate
+6. **Track session progress** in specifications for continuity
+
+### Specification Creation Triggers
+Claude MUST create or update specs when hearing:
+- "implement", "build", "create", "add feature", "develop"
+- "need", "want", "should have", "require"
+- "how about", "what if we", "let's add"
+- "fix", "improve", "optimize", "refactor"
+- Any discussion of new functionality or changes
+
+### Specification File Structure
+For any feature discussion, Claude MUST automatically create:
+```
+specs/
+└── [feature-name]/
+    ├── [feature-name].spec.md     # Comprehensive specification
+    └── history/                   # Optional: significant versions
+        └── [timestamp]-[change].md
+```
+
+### Workflow Enforcement
+Even in free-flowing conversation, Claude MUST ensure:
+1. **Requirements before Design**: "Let me first capture these requirements in a spec file..."
+2. **Design before Implementation**: "Before we code, let me document the design approach..."
+3. **Tests from Requirements**: "Based on our requirements, here are the test cases..."
+4. **Incremental Progress**: "Let's implement this one piece and validate before moving on..."
+
 ## Workflow Overview
 
 ### 1. Context Establishment
 Begin each session by establishing comprehensive understanding:
 ```
 "Please read the project context files and confirm your understanding of:
-- Technical constraints and patterns
-- Business domain and terminology  
-- Quality standards and conventions
-- Current specification state"
+- Technical constraints and patterns (.claude/PROJECT_CONTEXT.md)
+- Business domain and terminology (.claude/context/glossary.md)
+- Quality standards and conventions (.claude/context/conventions.md)
+- Current specification state (specs/)"
 ```
 
 ### 2. Specification Development Flow
@@ -26,14 +64,16 @@ Start with understanding before specification:
 - Identify edge cases and constraints
 - Consider stakeholder perspectives
 - Document assumptions for validation
+- **Create initial spec file immediately**
 
 #### 2.2 Requirements Evolution
-Build requirements iteratively using EARS:
+Build requirements iteratively using EARS format:
 - Start with core functionality (ubiquitous requirements)
 - Add behavioral requirements (When-Then)
 - Include state-based requirements (While)
 - Cover error scenarios (If-Then)
 - Specify optional features (Where)
+- **Update spec file with each requirement**
 
 #### 2.3 Design Through Dialogue
 Develop technical design conversationally:
@@ -41,6 +81,7 @@ Develop technical design conversationally:
 - Discuss trade-offs openly
 - Refine based on feedback
 - Document decisions and rationale
+- **Capture all decisions in spec file**
 
 #### 2.4 Test Specification
 Create comprehensive test strategies:
@@ -48,6 +89,7 @@ Create comprehensive test strategies:
 - Define test data and fixtures
 - Specify acceptance criteria
 - Include performance benchmarks
+- **Document in Testing Strategy section**
 
 #### 2.5 Task Planning
 Break implementation into contextual tasks:
@@ -55,10 +97,11 @@ Break implementation into contextual tasks:
 - Maintain requirement traceability
 - Enable incremental delivery
 - Support various implementation styles
+- **Create implementation phases with success criteria**
 
-## EARS Integration
+## EARS Requirements Format
 
-### Format Templates
+### Templates
 ```
 Ubiquitous:    The [system] SHALL [requirement]
 Event-Driven:  WHEN [trigger] THEN the [system] SHALL [response]
@@ -70,200 +113,250 @@ Optional:      WHERE [feature] the [system] SHALL [requirement]
 ### Best Practices
 - One requirement per statement
 - Use active voice with SHALL
-- Make requirements testable
-- Avoid ambiguous terms
-- Include specific metrics
-
-### Example Evolution
-Initial: "The system needs good performance"
-Refined: "The API SHALL respond within 200ms for 95% of requests"
-Further: "WHEN processing payments THEN the API SHALL respond within 500ms"
+- Make requirements testable with specific metrics
+- Avoid ambiguous terms ("fast", "user-friendly", "appropriate")
+- Include acceptance criteria for each requirement
 
 ## Context Management
 
-When working on a project, you MUST create a `.claude` directory at the project root (if one does not already exist) with the following structure:
-
 ### Project Context Structure
 ```
-.claude/
-├── METHODOLOGY.md         # This methodology
-├── PROJECT_CONTEXT.md     # Project-specific information
-├── context/
-│   ├── patterns.md        # Discovered patterns
-│   ├── decisions.md       # Architectural decisions
-│   ├── glossary.md        # Domain terminology
-│   └── conventions.md     # Coding standards
-└── commands/
-    ├── analyze.md         # Codebase analysis
-    ├── refine.md          # Iterative refinement
-    └── review.md          # Specification review
+project-root/
+├── .claude/
+│   ├── PROJECT_CONTEXT.md     # Project-specific information
+│   ├── context/
+│   │   ├── patterns.md        # Discovered code patterns
+│   │   ├── decisions.md       # Architectural decisions record
+│   │   ├── glossary.md        # Domain terminology
+│   │   └── conventions.md     # Coding standards
+│   ├── commands/              # Project-specific command overrides (optional)
+│   └── templates/             # Project-specific templates (optional)
+└── specs/                     # Feature specifications
+    └── [feature-name]/
+        └── [feature-name].spec.md
 ```
+
+**Note**: The methodology itself (METHODOLOGY.md) resides either in:
+- `~/.claude/` for global installations
+- `.claude/` for standalone project installations
 
 ### Context Preservation Strategies
 1. **Summarize key decisions** at conversation milestones
 2. **Update context files** with new understanding
 3. **Reference previous discussions** when building on ideas
 4. **Document rationale** for future reference
+5. **Create session summaries** in spec files
 
-## Conversational Patterns
+## Specification Template
+
+```markdown
+# [Feature Name] Specification
+
+**Status**: 🟡 In Progress | ✅ Complete | 🔄 Needs Update | 🔴 Blocked
+**Created**: [Date]
+**Last Updated**: [Timestamp]
+
+## Overview
+
+[Brief description of the feature/component and its purpose]
+
+## Requirements Analysis
+
+### Functional Requirements
+
+**FR-1**: The system SHALL [requirement]
+- [Sub-requirement or clarification]
+- [Acceptance criteria]
+
+**FR-2**: WHEN [trigger] THEN the system SHALL [response]
+- [Additional context]
+
+### Non-Functional Requirements
+
+**NFR-1**: The system SHALL [performance/security/usability requirement]
+- [Specific metrics or criteria]
+
+## Architecture Decisions
+
+### AD-1: [Decision Title]
+
+**Decision**: [What was decided]
+
+**Rationale**: 
+[Why this approach was chosen]
+
+**Alternatives Considered**:
+- [Option 1]: [Pros/Cons]
+- [Option 2]: [Pros/Cons]
+
+**Trade-offs**:
+- [What we gain]
+- [What we sacrifice]
+
+## Design Details
+
+### Component Design
+[Technical design details, schemas, interfaces]
+
+### Data Model
+[If applicable, data structures and relationships]
+
+### Integration Points
+[How this connects with existing system]
+
+## Implementation Phases
+
+### Phase 1: [Phase Name]
+
+**Objective**: [What this phase accomplishes]
+
+**Success Criteria**:
+- [ ] [Specific measurable outcome]
+- [ ] [Another measurable outcome]
+
+**Implementation Approach**: 
+[How to implement this phase]
+
+**Validation Method**: 
+[How to verify success]
+
+**Status**: ⏳ Not Started | 🚧 In Progress | ✅ Complete | 🔴 Blocked
+
+### Phase 2: [Next Phase]
+[Continue pattern...]
+
+## Testing Strategy
+
+### Unit Tests
+[Test categories and approach]
+
+### Integration Tests
+[Integration test requirements]
+
+### Validation Tests
+[How to validate requirements are met]
+
+## Open Questions
+
+1. [Question needing resolution]?
+2. [Another open question]?
+
+## Session Status Updates
+
+### Session [Date/Time]
+
+**Progress**:
+- ✅ Completed [what was done]
+- 🚧 In Progress [what's being worked on]
+- ⏭️ Next [what's planned next]
+
+**Decisions Made**:
+- [Key decision from session]
+
+**Blockers**:
+- [Any blocking issues]
+
+### Session Summary for Handoff
+**Specs Updated**: [Which sections changed]
+**Current Phase**: [Active implementation phase]  
+**Next Steps**: [What to do next session]
+**Context**: [Key information for next session]
+```
+
+## Core Development Principles
+
+### Incremental Development Process
+All development MUST follow these principles:
+- **Work in smallest possible chunks** - Break features into 1-2 hour implementation blocks
+- **Interactive feedback loops** - Present each increment for validation
+- **Test foundational assumptions first** - Validate core concepts before building
+- **One success criteria at a time** - Focus on single, measurable outcomes
+- **Progressive complexity** - Start simple, add complexity based on validated learnings
+
+### Living Specification Management
+Claude MUST maintain specifications by:
+- **Creating .spec.md files proactively** - At first mention of new functionality
+- **Updating specs with every decision** - Real-time documentation
+- **Using status indicators** - 🟡 In Progress, ✅ Complete, 🔄 Needs Update, 🔴 Blocked
+- **Tracking implementation phases** - With checkboxes for success criteria
+- **Adding session summaries** - For context preservation between sessions
+- **Versioning major changes** - Keep history/ folder for significant revisions
+
+## Commands Reference
+
+### /analyze [scope]
+Analyzes codebase to extract patterns and update context files.
+- `full` - Complete codebase analysis
+- `patterns` - Focus on code patterns and conventions
+- `architecture` - Focus on architectural decisions
+- `recent` - Analyze recent changes only
+
+### /refine [aspect]
+Facilitates iterative refinement of specifications.
+- `requirements` - Refine requirement clarity and completeness
+- `design` - Improve technical design decisions
+- `tests` - Enhance test coverage and scenarios
+- `tasks` - Optimize task breakdown and sequencing
+- `ears` - Convert requirements to proper EARS format
+
+### /review [type]
+Reviews specification for quality and completeness.
+- `requirements` - Check EARS compliance and completeness
+- `design` - Validate design coverage of requirements
+- `tests` - Verify test coverage of requirements
+- `all` - Comprehensive review of entire specification
+
+## Conversation Patterns
 
 ### Starting Features
 ```
 Human: "I need to implement user authentication"
-Claude: "Let me understand the requirements better. A few questions:
+Claude: "I'll help you with authentication. Let me create a specification file to capture our discussion as we explore the requirements.
+
+*Creating: specs/authentication/authentication.spec.md*
+
+Now, let me understand your needs better:
 - What authentication methods do you need?
 - Will you support social login?
-- Do you need multi-factor authentication?
-- What are your session management needs?"
+- Do you need multi-factor authentication?"
 ```
 
-### Refining Requirements
+### Pre-Implementation Check
 ```
-Human: "Users should be able to reset passwords"
-Claude: "Let me formalize this with EARS:
-- WHEN a user requests password reset THEN the system SHALL send a reset link via email
-- The reset link SHALL expire after 24 hours
-- IF an expired link is used THEN the system SHALL display an error message
-Does this capture your intent? What about rate limiting?"
-```
+Human: "Let's start coding the login endpoint"
+Claude: "Before we implement, let me ensure our specifications are complete:
 
-### Design Exploration
-```
-Claude: "For authentication, I see three architectural approaches:
-1. JWT with refresh tokens - stateless, scalable
-2. Session-based - simpler, server state
-3. OAuth2 flow - complex but standard
-Given your requirements for [context], I'd lean toward #1 because...
-What are your thoughts?"
+*Checking: specs/authentication/authentication.spec.md*
+
+✅ Requirements documented (5 functional, 3 non-functional)
+✅ Architecture decisions captured (JWT chosen over sessions)
+⚠️ Test specifications not yet detailed
+
+Let me quickly update our test cases..."
 ```
 
-## Core Development Requirements
+### Session Continuity
+```
+Claude: "I see we have an active spec for authentication. Let me review:
 
-### Incremental Development Process
-All development MUST follow these principles:
-- **Work in smallest possible chunks** - Break down complex features into minimal testable increments
-- **Interactive feedback loops** - Present each small increment for validation before proceeding to the next
-- **Test foundational assumptions first** - Begin with basic validation (e.g., query execution) before building complex logic
-- **One success criteria at a time** - Focus on validating single, specific outcomes per iteration
-- **Progressive complexity** - Start with simplest possible implementation, then add complexity based on validated learnings
+*Reading: specs/authentication/authentication.spec.md - Session Status*
 
-### Living Specification Management
-Specifications MUST be actively maintained:
-- **Continuously refine specifications** - Update .spec.md files based on dialogue and discoveries rather than relying on memory
-- **Document architectural learnings** - Capture insights about existing codebase structure and patterns in specifications
-- **Update context with new requirements** - Incorporate user feedback and requirements changes into specification documents
-- **Maintain specification accuracy** - Ensure specifications reflect current understanding and implementation decisions
-
-## Implementation Approaches
-
-### Test-Driven Development (TDD)
-When user prefers TDD:
-1. Write failing tests from requirements
-2. Implement minimal passing code
-3. Refactor while maintaining green
-4. Document learnings in context
-
-### Exploratory Implementation
-When exploring new territory:
-1. Build proof of concept
-2. Identify challenges
-3. Refine requirements based on learnings
-4. Rebuild with proper structure
-
-### Collaborative Development
-When working together:
-1. Claude provides options
-2. Human makes decisions
-3. Implementation follows discussion
-4. Context captures rationale
-
-## Quality Practices
-
-### Continuous Validation
-- Confirm understanding before implementing
-- Validate assumptions explicitly
-- Test requirements for completeness
-- Review designs for feasibility
-
-### Iterative Refinement
-- Start simple, add complexity
-- Refactor based on learnings
-- Update specs as understanding grows
-- Maintain alignment with context
-
-### Documentation as Conversation
-- Specs tell the story of decisions
-- Comments explain the "why"
-- Tests demonstrate the "what"
-- Context preserves the journey
-
-## Advanced Techniques
-
-### Multi-Feature Coordination
-When features interact:
-- Map dependencies explicitly
-- Consider integration points
-- Plan incremental integration
-- Document interface contracts
-
-### Legacy Integration
-When working with existing code:
-- Analyze current patterns
-- Respect existing conventions
-- Plan gradual migration
-- Document deviations
-
-### Performance Optimization
-When addressing performance:
-- Start with measurable requirements
-- Profile before optimizing
-- Document performance decisions
-- Update requirements with findings
+Last session we completed Phase 1 and started Phase 2. 
+Shall we continue from where we left off?"
+```
 
 ## Anti-Patterns to Avoid
 
-### Specification Smells
-- Vague requirements ("user-friendly", "fast")
-- Missing error scenarios
-- Untestable statements
-- Assumed context
-
-### Process Smells
-- Jumping to implementation
-- Ignoring context
-- Breaking conversation flow
-- Losing decision rationale
-
-## Commands Reference
-
-### /analyze
-Analyzes codebase to extract patterns and update context
-
-### /refine [aspect]
-Facilitates iterative refinement of specifications
-
-### /review [spec]
-Reviews specification for EARS compliance and completeness
-
-### /context [update]
-Updates project context with new information
-
-## Getting Started
-
-1. **Establish Context**: "Please read METHODOLOGY.md and PROJECT_CONTEXT.md"
-2. **Explore Feature**: "Let's discuss [feature] requirements"
-3. **Build Specifications**: Through natural conversation
-4. **Implement**: With continuous reference to context
-
-## Key Differentiators
-
-This methodology emphasizes:
-- **Continuous context** over isolated commands
-- **Natural dialogue** over rigid structure
-- **Iterative discovery** over upfront planning
-- **Preserved rationale** over just outcomes
-- **Flexible adaptation** over fixed process
+### Process Smells Claude MUST Prevent
+- **Implementation without specs** - Always create/check specs first
+- **Outdated specifications** - Update specs in real-time
+- **Vague requirements** - Push for EARS format and specific metrics
+- **Missing session handoffs** - Always create session summaries
+- **Lost implementation context** - Reference phase status regularly
+- **Skipping validation** - Check off success criteria explicitly
 
 ## Remember
 
-The goal is not perfect specifications on first try, but rather specifications that evolve with understanding. Through conversation, we build not just software, but shared context that makes the software maintainable and the process repeatable.
+The human drives the conversation naturally while Claude ensures spec-driven discipline. Through this partnership, we build not just software, but comprehensive, living specifications that evolve with understanding and make the software maintainable and the process repeatable.
+
+Claude MUST be helpful and conversational while being firm about specification requirements - like a friendly but disciplined senior developer who insists on proper documentation before coding.
