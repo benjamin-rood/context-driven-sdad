@@ -115,9 +115,8 @@ install_global() {
     print_info "Global installation will create/modify:"
     echo "  • $install_path/METHODOLOGY.md"
     echo "  • $install_path/CLAUDE.md (updated with methodology reference)"
-    echo "  • $install_path/commands/ (analyze.md, refine.md, review.md)"
+    echo "  • $install_path/commands/ (analyze.md, refine.md, review.md, start.md, uninstall.md)"
     echo "  • $install_path/templates/ (requirements, design, tasks templates)"
-    echo "  • $HOME/uninstall-claude-sdd-global.sh (uninstaller)"
     echo ""
     
     if [[ "$FORCE" == false ]]; then
@@ -188,6 +187,7 @@ EOF
     print_info "Next steps:"
     echo "  • Run '$0 --project /path/to/project' to set up individual projects"
     echo "  • Projects will automatically use global methodology with minimal local setup"
+    echo "  • Use /start in Claude Code to initialize sessions"
     echo "  • Projects can override commands/templates by placing them in local .claude/ directory"
 }
 
@@ -212,8 +212,6 @@ install_project() {
         echo "  • $install_path/PROJECT_CONTEXT.md (existing CLAUDE.md content will be moved here)"
         echo "  • $install_path/context/ (patterns.md, decisions.md, glossary.md, conventions.md)"
         echo "  • $install_path/commands/ and $install_path/templates/ (empty, for overrides)"
-        echo "  • $project_path/init-claude.sh (session initialization helper)"
-        echo "  • $project_path/uninstall-claude-sdd.sh (uninstaller)"
     else
         has_global=false
         print_info "No global methodology found - installing complete standalone setup"
@@ -222,10 +220,8 @@ install_project() {
         echo "  • $install_path/METHODOLOGY.md (complete methodology)"
         echo "  • $install_path/PROJECT_CONTEXT.md (existing CLAUDE.md content will be moved here)"
         echo "  • $install_path/context/ (patterns.md, decisions.md, glossary.md, conventions.md)"
-        echo "  • $install_path/commands/ (analyze.md, refine.md, review.md)"
+        echo "  • $install_path/commands/ (analyze.md, refine.md, review.md, start.md, uninstall.md)"
         echo "  • $install_path/templates/ (requirements, design, tasks templates)"
-        echo "  • $project_path/init-claude.sh (session initialization helper)"
-        echo "  • $project_path/uninstall-claude-sdd.sh (uninstaller)"
     fi
     echo ""
     
@@ -368,35 +364,6 @@ EOF
         fi
     fi
     
-    # Create project initialization script
-    cat > "$project_path/init-claude.sh" << 'EOF'
-#!/bin/bash
-# Initialize Claude Code session with Context-Driven Spec Development
-
-echo "🚀 Initializing Claude Code with Context-Driven Spec Development..."
-echo ""
-
-if [[ -f ~/.claude/METHODOLOGY.md ]]; then
-    echo "📚 Global methodology detected"
-    echo "Start your session with:"
-    echo "  'Please read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md'"
-else
-    echo "📚 Standalone project setup detected"
-    echo "Start your session with:"
-    echo "  'Please read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md'"
-fi
-
-echo ""
-echo "Then begin feature development with:"
-echo "  'Let's explore requirements for [feature]'"
-echo ""
-echo "Available commands:"
-echo "  /analyze [scope]     - Analyze codebase patterns"
-echo "  /refine [aspect]     - Refine specifications"
-echo "  /review [type]       - Review quality and completeness"
-echo ""
-EOF
-    chmod +x "$project_path/init-claude.sh"
     
     if [[ "$has_global" == true ]]; then
         print_success "Minimal project setup complete!"
@@ -417,8 +384,8 @@ EOF
     echo ""
     print_info "Next steps:"
     echo "  1. Fill in PROJECT_CONTEXT.md with your project details"
-    echo "  2. Run ./init-claude.sh for usage instructions"
-    echo "  3. Start Claude Code and begin conversational development!"
+    echo "  2. Start Claude Code and use /start to initialize your session"
+    echo "  3. Begin conversational development!"
 }
 
 # Verify installation
@@ -437,47 +404,6 @@ verify_installation() {
     return 1
 }
 
-# Create uninstall script
-create_uninstall_script() {
-    local script_path
-    if [[ "$INSTALL_MODE" == "global" ]]; then
-        script_path="$HOME/uninstall-claude-sdd-global.sh"
-        cat > "$script_path" << 'EOF'
-#!/bin/bash
-# Uninstall Global Context-Driven Spec Development
-
-echo "Removing global Context-Driven SDD installation..."
-read -p "This will remove ~/.claude/ and all global methodology files. Continue? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    rm -rf ~/.claude/
-    rm -f ~/uninstall-claude-sdd-global.sh
-    echo "✅ Global uninstallation complete."
-else
-    echo "❌ Uninstallation cancelled."
-fi
-EOF
-    else
-        script_path="$PROJECT_PATH/uninstall-claude-sdd.sh"
-        cat > "$script_path" << EOF
-#!/bin/bash
-# Uninstall Project Context-Driven Spec Development
-
-echo "Removing project Context-Driven SDD installation..."
-read -p "This will remove .claude/ directory and init script. Continue? (y/N) " -n 1 -r
-echo
-if [[ \$REPLY =~ ^[Yy]$ ]]; then
-    rm -rf "$PROJECT_PATH/.claude/"
-    rm -f "$PROJECT_PATH/init-claude.sh"
-    rm -f "$PROJECT_PATH/uninstall-claude-sdd.sh"
-    echo "✅ Project uninstallation complete."
-else
-    echo "❌ Uninstallation cancelled."
-fi
-EOF
-    fi
-    chmod +x "$script_path"
-}
 
 # Main execution
 main() {
@@ -493,8 +419,12 @@ main() {
     # Verify installation
     print_info "Verifying installation..."
     if verify_installation; then
-        create_uninstall_script
         print_success "Installation completed successfully! 🎉"
+        echo ""
+        print_info "To get started:"
+        echo "  • Start Claude Code in your project directory"
+        echo "  • Use /start to initialize your session"
+        echo "  • Use /uninstall to remove the framework if needed"
     else
         print_error "Installation verification failed"
         exit 1

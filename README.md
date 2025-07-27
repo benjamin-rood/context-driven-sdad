@@ -44,16 +44,18 @@ cd context-driven-sdad
 # Navigate to your project
 cd your-project
 
-# Use the initialization helper
-./init-claude.sh
-
 # Start Claude Code
 claude
 
-# Initialize context (commands vary based on installation)
-> Please read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md  # Global install
-> Please read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md   # Standalone
+# Initialize your session with the new command
+> /start
 ```
+
+The `/start` command will automatically:
+- Detect your installation type (global or standalone)
+- Load the appropriate methodology and context files
+- Display available commands and next steps
+- Guide you through proper session initialization
 
 ### 3. Develop Your First Feature
 
@@ -134,9 +136,11 @@ Transform vague ideas into precise, testable requirements:
 
 ### Conversational Commands
 Natural language commands that guide refinement with hierarchical override support:
+- `/start` - Initialize context-driven development session with automatic setup detection
 - `/analyze [scope]` - Understand existing code patterns  
 - `/refine [aspect]` - Improve specifications through dialogue
 - `/review [type]` - Check quality and completeness
+- `/uninstall [type]` - Remove framework installation (project/global/all)
 
 Commands follow precedence: **project** → **global** → **built-in**
 
@@ -207,7 +211,9 @@ Shared methodology and tools for all projects:
 ├── commands/             # Command definitions (can be overridden)
 │   ├── analyze.md        # Codebase analysis
 │   ├── refine.md         # Specification refinement
-│   └── review.md         # Quality review
+│   ├── review.md         # Quality review
+│   ├── start.md          # Session initialization
+│   └── uninstall.md      # Framework removal
 └── templates/            # Specification templates (can be overridden)
     ├── requirements_ears.md
     ├── design-iterative.md
@@ -276,12 +282,13 @@ cd context-driven-sdad
 │   ├── commands/
 │   │   ├── analyze.md          # Codebase analysis
 │   │   ├── refine.md           # Specification refinement
-│   │   └── review.md           # Quality review
+│   │   ├── review.md           # Quality review
+│   │   ├── start.md            # Session initialization
+│   │   └── uninstall.md        # Framework removal
 │   └── templates/
 │       ├── requirements_ears.md
 │       ├── design-iterative.md
 │       └── tasks_contextual.md
-└── uninstall-claude-sdd-global.sh
 ```
 
 **Step 2: Project Setup**
@@ -294,17 +301,15 @@ cd /path/to/your/project
 ```
 your-project/
 ├── CLAUDE.md                   # Project Claude configuration
-├── .claude/
-│   ├── PROJECT_CONTEXT.md      # Project context template
-│   ├── context/
-│   │   ├── patterns.md         # Code patterns (empty)
-│   │   ├── decisions.md        # Architectural decisions (empty)
-│   │   ├── glossary.md         # Domain terms (empty)
-│   │   └── conventions.md      # Coding standards (empty)
-│   ├── commands/               # Empty (for overrides)
-│   └── templates/              # Empty (for overrides)
-├── init-claude.sh              # Session helper
-└── uninstall-claude-sdd.sh
+└── .claude/
+    ├── PROJECT_CONTEXT.md      # Project context template
+    ├── context/
+    │   ├── patterns.md         # Code patterns (empty)
+    │   ├── decisions.md        # Architectural decisions (empty)
+    │   ├── glossary.md         # Domain terms (empty)
+    │   └── conventions.md      # Coding standards (empty)
+    ├── commands/               # Empty (for overrides)
+    └── templates/              # Empty (for overrides)
 ```
 
 ### Option 2: Standalone Project
@@ -330,31 +335,29 @@ your-project/
 │   ├── commands/
 │   │   ├── analyze.md          # Codebase analysis
 │   │   ├── refine.md           # Specification refinement
-│   │   └── review.md           # Quality review
+│   │   ├── review.md           # Quality review
+│   │   ├── start.md            # Session initialization
+│   │   └── uninstall.md        # Framework removal
 │   └── templates/
 │       ├── requirements_ears.md
 │       ├── design-iterative.md
 │       └── tasks_contextual.md
-├── init-claude.sh              # Session helper
-└── uninstall-claude-sdd.sh
 ```
 
 ### Start Development
 
 ```bash
-# Use the helper script for guidance
-./init-claude.sh
-
 # Start Claude Code
 claude
 
-# Initialize context (path varies by installation type)
-> Please read ~/.claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md  # Global
-> Please read .claude/METHODOLOGY.md and .claude/PROJECT_CONTEXT.md   # Standalone
+# Initialize your session automatically
+> /start
 
 # Begin feature development  
 > Let's explore requirements for [your feature]
 ```
+
+The `/start` command automatically detects your installation type and loads the appropriate files, eliminating the need for manual initialization.
 
 ## 🎓 Learning the Approach
 
