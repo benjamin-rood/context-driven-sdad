@@ -1,6 +1,6 @@
 # Context-Driven Spec Development for Claude Code
 
-A conversational methodology for building software through comprehensive specifications, designed for Claude Code's natural dialogue capabilities. Inspired by [Kiro](https://kiro.dev) and this [project by @marcelsud](https://github.com/marcelsud/spec-driven-agentic-development). Unlike that project, however, this framework attempts to find a middle-ground oriented around a conversation-based approach to spec-driven development rather than a command-based one.
+A conversational methodology for building software through comprehensive specifications, designed for Claude Code's natural dialogue capabilities. Inspired by [Kiro](https://kiro.dev) and this [project by @marcelsud](https://github.com/marcelsud/spec-driven-agentic-development). Unlike that project, however, this framework attempts to find a middle-ground oriented around a conversation-based approach to [spec-driven development](https://freedium.cfd/https://medium.com/@kittikawin_ball/spec-first-code-later-the-power-of-spec-driven-development-5d6270513cb3) rather than a command-based one.
 
 _( I don't know if this approach is better, but my goal is to use both @marcelsud's and this one and compare them by logging usage and gathering metrics with [this tool](https://github.com/benjamin-rood/claude-code-dev-logger) )_
 
