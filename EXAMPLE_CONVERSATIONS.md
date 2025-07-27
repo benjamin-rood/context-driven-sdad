@@ -6,20 +6,27 @@ This document demonstrates the context-driven approach through realistic convers
 ```
 Human: I need to add payment processing to our app.
 
-Claude: Let me understand your payment requirements better:
+Claude: I'll help you implement payment processing. Let me create a specification file to capture our discussion as we explore the requirements.
+
+*Creating: specs/payment-processing/payment-processing.spec.md*
+
+Now, let me understand your payment requirements better:
 - What payment methods do you need to support?
 - Will you process payments directly or use a provider?
 - What currencies and regions do you need to handle?
 - Do you need subscription support or just one-time payments?
 
-Based on your answers, we'll build EARS requirements iteratively...
+I'll update our specification file as we discuss these requirements...
 ```
 
 ## Refining Requirements
 ```
 Human: Users should be able to save payment methods for future use.
 
-Claude: Let me formalize this into EARS requirements:
+Claude: Let me formalize this into EARS requirements and update our specification:
+
+*Updating: specs/payment-processing/payment-processing.spec.md - Requirements Section*
+
 - WHEN a user successfully completes a payment THEN the system SHALL offer to save the payment method
 - WHERE a user opts to save a payment method the system SHALL store a tokenized reference
 - The system SHALL NOT store actual card numbers, only payment provider tokens
@@ -29,11 +36,15 @@ Should we also consider:
 - Maximum number of saved payment methods?
 - Default payment method selection?
 - PCI compliance requirements?
+
+I'll add these to our open questions section in the spec file.
 ```
 
 ## Design Evolution
 ```
 Claude: For payment processing, I see three architectural approaches:
+
+*Updating: specs/payment-processing/payment-processing.spec.md - Architecture Decisions*
 
 1. **Direct Integration** with Stripe/PayPal
    - Pros: Full control, single vendor
@@ -50,13 +61,25 @@ Claude: For payment processing, I see three architectural approaches:
 Given your requirements for saving payment methods and quick implementation, 
 I'd lean toward #1 with Stripe. Their vault handles tokenization securely.
 What are your thoughts?
+
+I'll document this decision and rationale in our Architecture Decisions section.
 ```
 
 ## Test-Driven Implementation
 ```
 Human: Let's implement the payment creation endpoint using TDD.
 
-Claude: Perfect! Let's start with the failing tests. Based on our requirements:
+Claude: Perfect! Let's start with the failing tests. Before we code, let me check our specification completeness:
+
+*Checking: specs/payment-processing/payment-processing.spec.md*
+
+✅ Requirements documented (8 functional, 3 non-functional)
+✅ Architecture decisions captured (Stripe integration chosen)
+🔄 Now adding test specifications...
+
+*Updating: specs/payment-processing/payment-processing.spec.md - Testing Strategy*
+
+Based on our requirements, here are the test cases:
 
 ```python
 async def test_successful_payment_creates_charge():
@@ -83,21 +106,27 @@ Run these - they should fail. Now let's implement the minimal code to make them 
 ```
 Human: Wait, what were our security requirements for payments again?
 
-Claude: Looking back at our conversation, we established these security requirements:
+Claude: Let me check our specification file for the security requirements:
+
+*Reading: specs/payment-processing/payment-processing.spec.md - Non-Functional Requirements*
+
+Here are the security requirements we established:
 - PCI DSS compliance through tokenization (never store raw card data)
 - All payment data must be encrypted in transit (HTTPS only)
 - Rate limiting: 10 payment attempts per user per hour
 - Audit logging for all payment operations
 - If suspicious activity detected, require additional verification
 
-We also discussed using Stripe's vault for secure token storage. Should I show how these requirements affect our current implementation?
+We also documented using Stripe's vault for secure token storage in our Architecture Decisions section. Should I show how these requirements affect our current implementation?
 ```
 
 ## Iterative Refinement
 ```
 Human: The requirements look good, but I realized we need to handle partial refunds too.
 
-Claude: Good catch! Let me add partial refund requirements to our specification:
+Claude: Good catch! Let me update our specification with partial refund requirements:
+
+*Updating: specs/payment-processing/payment-processing.spec.md - Requirements Section*
 
 **Existing requirement:**
 - WHEN a refund is requested THEN the system SHALL process full refund
@@ -108,22 +137,30 @@ Claude: Good catch! Let me add partial refund requirements to our specification:
 - The system SHALL track cumulative refunds per payment
 - WHERE multiple partial refunds exist the system SHALL NOT exceed original amount
 
+*Updating: specs/payment-processing/payment-processing.spec.md - Design Details*
+
 This changes our data model - we'll need a refunds table to track history. Should we also consider:
 - Refund approval workflow?
 - Time limits on refunds?
 - Webhook handling for refund status updates?
+
+I'll add these to our open questions and update the data model section.
 ```
 
 ## Discovery Through Implementation
 ```
 Human: I'm implementing the webhook handler and realized Stripe can send duplicate events.
 
-Claude: Excellent discovery! This is a critical issue. Let's update our requirements and design:
+Claude: Excellent discovery! This is a critical issue. Let me update our specification:
+
+*Updating: specs/payment-processing/payment-processing.spec.md - Requirements Section*
 
 **New Requirements:**
 - The system SHALL process each webhook event exactly once (idempotency)
 - IF duplicate webhook received THEN the system SHALL return success without reprocessing
 - The system SHALL store webhook event IDs with timestamps
+
+*Updating: specs/payment-processing/payment-processing.spec.md - Design Details*
 
 **Implementation approach:**
 ```python
@@ -137,20 +174,25 @@ class WebhookHandler:
         # Store event_id
 ```
 
-This is why iterative development works well - implementation reveals requirements!
+This is why iterative development works well - implementation reveals requirements! I've captured this learning in our specification for future reference.
 ```
 
 ## Context Building Over Time
 ```
 Human: Now I need to add subscription support. Can we build on what we have?
 
-Claude: Absolutely! Let's build on our existing payment infrastructure. From our previous work:
+Claude: Absolutely! Let me create a subscription specification that builds on our existing payment infrastructure:
 
-**What we can reuse:**
+*Creating: specs/subscription-management/subscription-management.spec.md*
+*Reading: specs/payment-processing/payment-processing.spec.md for reusable components*
+
+From our existing payment work, we can reuse:
 - Payment method tokenization and storage
 - Security requirements (PCI compliance, encryption)
 - Webhook handling with idempotency
 - Error handling patterns
+
+*Updating: specs/subscription-management/subscription-management.spec.md - Requirements*
 
 **New requirements for subscriptions:**
 - WHEN a user subscribes THEN the system SHALL create recurring payment schedule
@@ -160,25 +202,29 @@ Claude: Absolutely! Let's build on our existing payment infrastructure. From our
 - WHEN subscription cancelled the system SHALL maintain access until period ends
 
 **Design considerations:**
-Since we chose Stripe, we can use their Subscription API which integrates with our existing payment methods. Should we:
+Since we chose Stripe in our payment spec, we can use their Subscription API. Should we:
 1. Store subscription state locally and sync with Stripe?
 2. Use Stripe as source of truth with webhooks?
 3. Hybrid approach with caching?
 
-Your thoughts on state management?
+I'll document these options in our Architecture Decisions section. Your thoughts on state management?
 ```
 
 ## Continuous Learning
 ```
 Human: After testing, I noticed our payment processing is slow. Any ideas?
 
-Claude: Let's analyze the payment flow based on what we've built:
+Claude: Let me analyze this based on our current implementation and update our specification:
+
+*Reading: specs/payment-processing/payment-processing.spec.md - Design Details*
 
 Current flow:
 1. Validate input (5ms)
 2. Create Stripe payment intent (200ms) ← Bottleneck
 3. Store in database (20ms)
 4. Send confirmation email (150ms) ← Also slow
+
+*Updating: specs/payment-processing/payment-processing.spec.md - Performance Optimization*
 
 Optimization approaches:
 
@@ -189,8 +235,6 @@ Optimization approaches:
 **Architectural changes:**
 - Queue payment processing for better reliability
 - Implement optimistic UI updates
-
-Let me update our design to show the async approach:
 
 ```python
 async def create_payment(self, payment_data: PaymentCreate):
@@ -209,14 +253,23 @@ async def create_payment(self, payment_data: PaymentCreate):
     return charge  # Return immediately
 ```
 
-This maintains our requirements while improving performance. Should we also add performance requirements to our spec?
+*Adding: specs/payment-processing/payment-processing.spec.md - Non-Functional Requirements*
+
+Should we add performance requirements like "Payment processing SHALL complete within 300ms"?
 ```
 
 ## End-of-Session Reflection
 ```
 Human: I think we've made good progress on payments. What did we accomplish?
 
-Claude: Great session! Here's what we built together:
+Claude: Great session! Let me update our specification status and summarize:
+
+*Updating: specs/payment-processing/payment-processing.spec.md - Session Status*
+*Updating: specs/subscription-management/subscription-management.spec.md - Session Status*
+
+**Specifications Created:**
+- ✅ specs/payment-processing/payment-processing.spec.md (Complete)
+- 🔄 specs/subscription-management/subscription-management.spec.md (In Progress)
 
 **Requirements Developed:**
 - ✅ Payment processing with PCI compliance
@@ -224,7 +277,7 @@ Claude: Great session! Here's what we built together:
 - ✅ Comprehensive error handling
 - ✅ Refund support (full and partial)
 - ✅ Webhook idempotency
-- ✅ Subscription framework
+- 🔄 Subscription framework (started)
 
 **Key Decisions Made:**
 - Chose Stripe for payment provider (tokenization, vault)
@@ -244,7 +297,7 @@ Claude: Great session! Here's what we built together:
 - Create admin dashboard
 - Load test the payment endpoints
 
-The specifications we created are living documents - they evolved as we discovered new requirements through implementation. This conversation becomes valuable context for future work on the payment system.
+All our decisions and learnings are captured in the specification files for future sessions.
 
 Ready to tackle subscriptions in our next session?
 ```

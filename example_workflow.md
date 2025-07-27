@@ -6,18 +6,25 @@ This example demonstrates the context-driven approach to developing a complete f
 
 ### Human:
 ```
-Please read .claude/METHODOLOGY.md and PROJECT_CONTEXT.md to understand our project and methodology.
+/start
 ```
 
 ### Claude:
 ```
-I've read both files and understand:
+I've detected a global installation and loaded your methodology. Let me read your project context:
+
+*Reading: .claude/PROJECT_CONTEXT.md*
+*Reading: .claude/context/* files*
+
+I understand:
 - We're building a task management SaaS application
 - Using Python/FastAPI with PostgreSQL
 - Following context-driven spec development with EARS
 - Emphasizing continuous conversation over rigid commands
 
 I see we have REST API patterns established and JWT authentication is planned. Ready to explore your next feature using our conversational approach.
+
+What would you like to work on today?
 ```
 
 ### Human:
@@ -27,7 +34,11 @@ Great! I need to implement user authentication. Let's start by exploring what th
 
 ### Claude:
 ```
-Let's explore user authentication for your task management system. I have several questions to understand your needs:
+I'll help you implement user authentication. Let me create a specification file to capture our discussion as we explore the requirements.
+
+*Creating: specs/authentication/authentication.spec.md*
+
+Now, let's explore user authentication for your task management system. I have several questions to understand your needs:
 
 **Authentication Methods:**
 - Just email/password, or do you need social login (Google, GitHub)?
@@ -68,7 +79,9 @@ Expected scale is ~10k users initially.
 
 ### Claude:
 ```
-Perfect, that gives us a clear scope. Let me formalize these into EARS requirements, building them up conversationally:
+Perfect, that gives us a clear scope. Let me formalize these into EARS requirements and update our specification:
+
+*Updating: specs/authentication/authentication.spec.md - Requirements Section*
 
 ## Core Authentication Requirements
 
@@ -102,7 +115,9 @@ These look good. One change - make the lockout by IP address instead of email to
 
 ### Claude:
 ```
-Good security thinking! Let me revise that and continue:
+Good security thinking! Let me revise that requirement and continue:
+
+*Updating: specs/authentication/authentication.spec.md - Requirements Section*
 
 **Account Lockout (Revised):**
 - IF an IP address fails login 5 times within 10 minutes THEN the system SHALL block login attempts from that IP for 30 minutes
@@ -139,7 +154,9 @@ Yes, add rate limiting. Also, I'm wondering about the technical approach. Should
 
 ### Claude:
 ```
-Let me add rate limiting requirements first:
+Let me add rate limiting requirements to our specification first:
+
+*Updating: specs/authentication/authentication.spec.md - Requirements Section*
 
 **Rate Limiting:**
 - The system SHALL limit registration to 5 attempts per IP address per hour
@@ -195,6 +212,8 @@ I like the hybrid approach. Let's detail the architecture.
 ### Claude:
 ```
 Excellent choice. Let me design the architecture for our hybrid authentication system:
+
+*Updating: specs/authentication/authentication.spec.md - Architecture Decisions*
 
 ## Authentication Architecture
 
@@ -345,7 +364,9 @@ This looks solid. Let's break this down into implementation tasks.
 
 ### Claude:
 ```
-Let me break this down into implementation tasks, organized by testing approach and dependencies:
+Let me break this down into implementation tasks and update our specification:
+
+*Updating: specs/authentication/authentication.spec.md - Implementation Phases*
 
 ## Implementation Tasks
 
@@ -491,7 +512,16 @@ This is great. Let's start implementing Task 1.1. Can you guide me through the T
 
 ### Claude:
 ```
-Absolutely! Let's start with TDD for the database schema and models. I'll guide you through the red-green-refactor cycle.
+Absolutely! Let's start with TDD for the database schema and models. Before we begin, let me check our specification completeness:
+
+*Checking: specs/authentication/authentication.spec.md*
+
+✅ Requirements documented (12 functional, 4 non-functional)
+✅ Architecture decisions captured (hybrid approach chosen)
+✅ Implementation phases defined with success criteria
+🔄 Now starting Phase 1: Foundation
+
+*Updating: specs/authentication/authentication.spec.md - Phase 1 Status*
 
 ## Task 1.1: Database Schema and Models - TDD Approach
 
@@ -650,6 +680,11 @@ class EmailVerification(Base):
 
 ### Next Steps
 
+*Updating: specs/authentication/authentication.spec.md - Task 1.1 Progress*
+
+✅ User model created and tested
+🔄 Next: PasswordReset and RefreshToken models
+
 1. Continue with PasswordReset and RefreshToken models
 2. Write tests for model relationships
 3. Create Alembic migrations
@@ -661,11 +696,14 @@ Would you like me to continue with the next model, or shall we create the Alembi
 ## Continuing the Conversation
 
 This example demonstrates how the context-driven approach:
-- Builds understanding through questions
-- Iteratively refines requirements
-- Explores design options together
-- Maintains context throughout
-- Guides implementation with TDD
-- Adapts based on feedback
+- **Proactive Spec Management**: Claude automatically creates and updates `specs/authentication/authentication.spec.md`
+- **Real-time Documentation**: Every decision gets captured in the specification immediately
+- **Workflow Enforcement**: Claude checks spec completeness before implementation
+- **Builds understanding through questions**: Natural dialogue while maintaining discipline
+- **Iteratively refines requirements**: Specifications evolve through conversation
+- **Explores design options together**: All options documented with rationale
+- **Maintains context throughout**: Spec files preserve all decisions and progress
+- **Guides implementation with TDD**: Test strategies linked to requirements
+- **Adapts based on feedback**: Updates reflected in living specifications
 
-The conversation would continue naturally, building on the established context and decisions, without needing to restart or lose understanding between phases.
+The conversation would continue naturally, building on the established context and decisions captured in the specification file, without needing to restart or lose understanding between phases. The `specs/authentication/authentication.spec.md` file becomes a living record of all decisions, requirements, and progress.
