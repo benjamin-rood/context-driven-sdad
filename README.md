@@ -425,18 +425,17 @@ Always include a clear explanation of what you've changed and why:
 # Project-Specific Methodology Customization
 *Local customization for [Your Project Name]*
 
-## Repository-Specific Customization
+# Repository-Specific Customization
 
 **IMPORTANT**: This project uses modified [specific aspect] to [reason].
 
-### [Customization Name]
-```
-# Standard methodology uses:
+## [Customization Name]
+
+### Standard methodology uses:
 [original behavior]
 
-# This project uses:  
+### This project uses:  
 [modified behavior]
-```
 
 ### Rationale for This Change
 [Clear explanation of why this change is needed]
@@ -457,16 +456,18 @@ This repository itself uses a customized methodology. Here's how we adapted it:
 - **Demonstrates Flexibility**: Shows methodology can adapt while maintaining principles
 
 **Implementation**:
-```markdown
-### Specification File Structure
-For any feature discussion, Claude MUST automatically create:
+
 ```
+### Specification File Structure
+
+For any feature discussion, Claude MUST automatically create:
+
 .claude/specs/
 └── [feature-name]/
     ├── [feature-name].spec.md     # Comprehensive specification
     └── history/                   # Optional: significant versions
 ```
-```
+
 
 ### Best Practices for Customization
 
@@ -491,7 +492,7 @@ For any feature discussion, Claude MUST automatically create:
 - Track changes over time as your project evolves
 - Share learnings with the SDD community
 
-### Advanced Customizations
+### Other Suggested Customizations
 
 #### Custom Command Definitions
 Override specific commands by creating local versions:
