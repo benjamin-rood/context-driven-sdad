@@ -249,6 +249,10 @@ install_project() {
     print_info "Creating project directory structure..."
     mkdir -p "$install_path"/{context,commands,templates}
     
+    # Create specs directory for feature specifications
+    print_info "Creating specs/ directory for feature specifications..."
+    mkdir -p "$project_path/specs"
+    
     # Always install PROJECT_CONTEXT.md template
     print_info "Installing PROJECT_CONTEXT.md template..."
     cp "$SCRIPT_DIR/PROJECT_CONTEXT.md" "$install_path/"

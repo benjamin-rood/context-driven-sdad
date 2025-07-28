@@ -263,6 +263,29 @@ project-root/
 **Context**: [Key information for next session]
 ```
 
+## Session Initialization
+
+### Using /start Command
+Claude recognizes the `/start` command to automatically initialize sessions:
+```
+Human: /start
+Claude: 🚀 Initializing Context-Driven Spec Development...
+
+✓ Global methodology detected
+✓ Loading ~/.claude/METHODOLOGY.md
+✓ Loading .claude/PROJECT_CONTEXT.md
+
+Available commands:
+  /analyze [scope] - Analyze codebase patterns
+  /refine [aspect] - Refine specifications
+  /review [type]   - Review quality and completeness
+  /uninstall [type] - Remove framework installation
+
+Ready! Start with: "Let's explore requirements for [feature]"
+```
+
+This eliminates the need to manually specify file paths and ensures proper methodology loading.
+
 ## Core Development Principles
 
 ### Incremental Development Process
@@ -276,6 +299,7 @@ All development MUST follow these principles:
 ### Living Specification Management
 Claude MUST maintain specifications by:
 - **Creating .spec.md files proactively** - At first mention of new functionality
+- **Organizing in specs/ directory** - Each feature in its own subdirectory
 - **Updating specs with every decision** - Real-time documentation
 - **Using status indicators** - 🟡 In Progress, ✅ Complete, 🔄 Needs Update, 🔴 Blocked
 - **Tracking implementation phases** - With checkboxes for success criteria
@@ -283,6 +307,13 @@ Claude MUST maintain specifications by:
 - **Versioning major changes** - Keep history/ folder for significant revisions
 
 ## Commands Reference
+
+### /start
+Initializes a context-driven development session by auto-detecting installation type.
+- Loads appropriate methodology and context files
+- Displays available commands
+- Provides session initialization guidance
+- Creates `specs/` directory if needed
 
 ### /analyze [scope]
 Analyzes codebase to extract patterns and update context files.
@@ -305,6 +336,12 @@ Reviews specification for quality and completeness.
 - `design` - Validate design coverage of requirements
 - `tests` - Verify test coverage of requirements
 - `all` - Comprehensive review of entire specification
+
+### /uninstall [type]
+Safely removes framework installation while preserving project content.
+- `project` - Remove project installation only
+- `global` - Remove global installation only
+- `all` - Remove both installations
 
 ## Conversation Patterns
 

@@ -11,10 +11,10 @@ I have effectively been using a soft type of  [Spec-Driven Development](https://
 This framework treats Claude Code as a collaborative partner who maintains spec-driven discipline while enabling natural conversation. Claude acts as the disciplined partner who ensures methodology rigor while you drive the conversation freely.
 
 ### Core Principles:
-- **Proactive Spec Management**: Claude automatically creates and maintains `.spec.md` files
+- **Proactive Spec Management**: Claude automatically creates and maintains `.spec.md` files in the `specs/` directory
 - **Continuous Context**: Understanding builds throughout the conversation
 - **Natural Dialogue**: Work with Claude like a senior colleague
-- **Incremental Development**: Work in smallest possible chunks with interactive feedback loops
+- **Incremental Development**: Work in smallest possible chunks (1-2 hour blocks) with interactive feedback loops
 - **Living Specifications**: Specifications continuously evolve and stay accurate
 - **Session Continuity**: Progress tracking and handoffs between development sessions
 - **Workflow Enforcement**: Requirements → Design → Tests → Implementation discipline
@@ -55,6 +55,7 @@ The `/start` command will automatically:
 - Detect your installation type (global or standalone)
 - Load the appropriate methodology and context files
 - Display available commands and next steps
+- Create the `specs/` directory if it doesn't exist
 - Guide you through proper session initialization
 
 ### 3. Develop Your First Feature
@@ -93,6 +94,7 @@ Claude proactively creates and maintains specifications without being asked:
 
 - **Triggers**: Any mention of "implement", "build", "create", "add feature", "need", "want", "fix", "improve"
 - **Location**: `specs/[feature-name]/[feature-name].spec.md`
+- **Naming**: Feature-based directories with descriptive names (e.g., `specs/user-authentication/user-authentication.spec.md`)
 - **Content**: Comprehensive template with status tracking, requirements, design decisions, and implementation phases
 - **Updates**: Real-time as the conversation evolves
 
@@ -157,6 +159,7 @@ Here's how a complete feature develops through conversation:
 ### 1. Initial Exploration
 ```
 "Let's explore user authentication requirements"
+→ Claude creates specs/user-authentication/user-authentication.spec.md
 → Claude asks clarifying questions
 → You provide context and constraints
 → Understanding builds naturally
@@ -165,7 +168,7 @@ Here's how a complete feature develops through conversation:
 ### 2. Requirements Evolution
 ```
 "Based on our discussion, let's formalize these into EARS requirements"
-→ Claude drafts requirements
+→ Claude drafts requirements in the spec file
 → You provide feedback
 → Requirements refine iteratively
 → Edge cases emerge through discussion
@@ -177,7 +180,7 @@ Here's how a complete feature develops through conversation:
 → Claude presents options with trade-offs
 → You make decisions together
 → Design evolves based on your feedback
-→ Rationale is captured
+→ Rationale is captured in the spec
 ```
 
 ### 4. Test-Driven Implementation
@@ -197,6 +200,7 @@ See `EXAMPLE_WORKFLOW.md` for a full authentication feature showing:
 - Design options explored together
 - TDD implementation with guidance
 - Continuous refinement without restarts
+- Spec files automatically created and maintained
 
 ## 🛠️ Installation Architecture
 
@@ -391,6 +395,135 @@ The best way to understand context-driven development is to see it in action:
 5. **Preserved Knowledge** - Decisions and rationale captured with architectural learnings
 6. **Natural Workflow** - Like working with a senior colleague on bite-sized problems
 
+## ⚙️ Customizing the Methodology
+
+The SDD framework is designed to be adaptable to specific project needs while maintaining its core principles. You can customize the methodology by creating a local `.claude/METHODOLOGY.md` file that overrides the global methodology.
+
+### When to Customize
+
+Consider methodology customization when:
+- **Project-specific requirements**: Your project has unique specification needs
+- **Tool integration**: You need to integrate with specific project tools or workflows  
+- **Team standards**: Your team has established conventions that differ from defaults
+- **Domain constraints**: Your domain requires specific documentation or compliance formats
+
+### How to Customize
+
+#### 1. Create Local Methodology Override
+```bash
+# Copy global methodology as starting point
+cp ~/.claude/METHODOLOGY.md .claude/METHODOLOGY.md
+
+# Or create from scratch
+touch .claude/METHODOLOGY.md
+```
+
+#### 2. Document Your Customizations
+Always include a clear explanation of what you've changed and why:
+
+```markdown
+# Project-Specific Methodology Customization
+*Local customization for [Your Project Name]*
+
+## Repository-Specific Customization
+
+**IMPORTANT**: This project uses modified [specific aspect] to [reason].
+
+### [Customization Name]
+```
+# Standard methodology uses:
+[original behavior]
+
+# This project uses:  
+[modified behavior]
+```
+
+### Rationale for This Change
+[Clear explanation of why this change is needed]
+```
+
+#### 3. Update Relevant Sections
+Modify the specific sections that need changes while preserving the overall structure and core principles.
+
+### Real Example: Framework Development
+
+This repository itself uses a customized methodology. Here's how we adapted it:
+
+**Customization**: Specification location changed from `specs/` to `.claude/specs/`
+
+**Rationale**: 
+- **Separation of Concerns**: Framework development specs should be distinct from user project specs
+- **Consistency**: All framework files reside in `.claude/` - specs should follow the same pattern  
+- **Demonstrates Flexibility**: Shows methodology can adapt while maintaining principles
+
+**Implementation**:
+```markdown
+### Specification File Structure
+For any feature discussion, Claude MUST automatically create:
+```
+.claude/specs/
+└── [feature-name]/
+    ├── [feature-name].spec.md     # Comprehensive specification
+    └── history/                   # Optional: significant versions
+```
+```
+
+### Best Practices for Customization
+
+#### Document the "Why"
+- Always explain the business or technical reason for changes
+- Reference specific project constraints or requirements
+- Include examples showing how the customization improves your workflow
+
+#### Preserve Core Principles  
+- Keep EARS requirements format
+- Maintain proactive specification management
+- Preserve conversational development approach
+- Continue using living documentation practices
+
+#### Test Your Changes
+- Verify Claude understands your customizations
+- Test the modified workflow with actual features
+- Document any issues or refinements needed
+
+#### Version Control Your Methodology
+- Commit `.claude/METHODOLOGY.md` to your repository
+- Track changes over time as your project evolves
+- Share learnings with the SDD community
+
+### Advanced Customizations
+
+#### Custom Command Definitions
+Override specific commands by creating local versions:
+```bash
+.claude/commands/analyze.md    # Override global analyze command
+.claude/commands/review.md     # Override global review command
+```
+
+#### Custom Templates
+Create project-specific specification templates:
+```bash
+.claude/templates/api-spec.md      # API-specific specification template
+.claude/templates/component.md     # Component specification template
+```
+
+#### Integration Hooks
+Customize how specifications integrate with your tools:
+- CI/CD pipeline integration
+- Issue tracker synchronization  
+- Documentation generation
+- Code review processes
+
+### Sharing Customizations
+
+If your customization would benefit others:
+- **Document the pattern** in community discussions
+- **Create reusable templates** for similar project types
+- **Contribute back** improvements to the core methodology
+- **Share success stories** showing the customization's value
+
+Remember: Customization should enhance the methodology's effectiveness for your specific context while preserving its collaborative, conversational nature.
+
 ## 🔗 Integration with Existing Projects
 
 This methodology works with any:
@@ -409,6 +542,9 @@ A: Claude proactively maintains discipline by automatically creating specificati
 **Q: Will Claude automatically create specification files?**
 A: Yes! Whenever you mention implementing, building, or creating features, Claude automatically creates comprehensive `.spec.md` files in the `specs/` directory and updates them throughout your conversation.
 
+**Q: Where are specifications stored?**
+A: All specifications are automatically created in the `specs/` directory at your project root. Each feature gets its own subdirectory (e.g., `specs/user-authentication/user-authentication.spec.md`).
+
 **Q: What if I just want to code without specs?**
 A: Claude will gently redirect you to create specifications first, but remains helpful and conversational. The methodology is designed to feel natural while maintaining necessary discipline.
 
@@ -426,6 +562,9 @@ A: Each specification includes session status updates, progress tracking with ch
 
 **Q: How do I handle large projects?**
 A: Break into features with separate spec files, maintain context in the `context/` directory, and reference accumulated knowledge. Each feature gets its own specification for focused development.
+
+**Q: What's the recommended chunk size for implementation?**
+A: Work in 1-2 hour implementation blocks. This aligns with the methodology's principle of incremental development with frequent validation points.
 
 ## 🙏 Contributing
 
