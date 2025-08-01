@@ -19,7 +19,7 @@ Upgrades the Context-Driven Spec Development framework by fetching the latest ve
 ### 2. Fetch Latest Framework Files
 **Use WebFetch to retrieve the latest files from GitHub repository:**
 
-**Base URL**: `https://raw.githubusercontent.com/benjamin-rood/claude-spec-driven-agentic-development/main/`
+**Base URL**: `https://raw.githubusercontent.com/benjamin-rood/context-driven-sdad/main/`
 
 **Required Files to Fetch:**
 - `METHODOLOGY.md`
@@ -34,8 +34,8 @@ Upgrades the Context-Driven Spec Development framework by fetching the latest ve
 
 **Fetch each file using URLs like:**
 ```
-https://raw.githubusercontent.com/benjamin-rood/claude-spec-driven-agentic-development/main/METHODOLOGY.md
-https://raw.githubusercontent.com/benjamin-rood/claude-spec-driven-agentic-development/main/commands/analyze.md
+https://raw.githubusercontent.com/benjamin-rood/context-driven-sdad/main/METHODOLOGY.md
+https://raw.githubusercontent.com/benjamin-rood/context-driven-sdad/main/commands/analyze.md
 etc.
 ```
 
