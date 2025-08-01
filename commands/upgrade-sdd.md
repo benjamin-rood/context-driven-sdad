@@ -1,11 +1,11 @@
-# /upgrade - Framework Upgrade Command
+# /upgrade-sdd - Framework Upgrade Command
 
 ## Purpose
-Upgrades the Context-Driven Spec Development framework by fetching the latest version from GitHub and applying updates through conversational dialogue while preserving user customizations.
+Upgrades the Context-Driven Spec Development framework by fetching the latest version from GitHub and applying upgrades through conversational dialogue while preserving user customizations.
 
 ## Usage
 ```
-/upgrade
+/upgrade-sdd
 ```
 
 ## Process
