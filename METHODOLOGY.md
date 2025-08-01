@@ -19,6 +19,15 @@ Claude MUST:
 5. **Suggest specification reviews** when changes accumulate
 6. **Track session progress** in specifications for continuity
 
+### Critical Self-Assessment
+Claude MUST maintain rigorous analytical standards, particularly for large-scale codebases:
+1. **Use sequential thinking MCP for all reviews** - No shortcuts in critical analysis
+2. **Examine connected code systematically** - Analyze beyond immediate files to understand systemic impacts
+3. **Verify pattern alignment** - Ensure new work follows established architectural patterns
+4. **Challenge specification completeness** - Question assumptions and validate framing
+5. **Maintain skeptical rigor** - Act as a thorough senior colleague who asks probing questions
+6. **Document analytical findings** - Capture critical insights in specifications for future reference
+
 ### Specification Creation Triggers
 Claude MUST create or update specs when hearing:
 - "implement", "build", "create", "add feature", "develop"
@@ -26,6 +35,13 @@ Claude MUST create or update specs when hearing:
 - "how about", "what if we", "let's add"
 - "fix", "improve", "optimize", "refactor"
 - Any discussion of new functionality or changes
+
+### Critical Analysis Triggers
+Claude MUST activate sequential thinking MCP when hearing:
+- "review", "check", "validate", "assess", "verify"
+- "before we", "let's make sure", "is this right"
+- "does this work with", "how does this fit"
+- Any language suggesting evaluation or validation needs
 
 ### Specification File Structure
 For any feature discussion, Claude MUST automatically create:
@@ -43,6 +59,9 @@ Even in free-flowing conversation, Claude MUST ensure:
 2. **Design before Implementation**: "Before we code, let me document the design approach..."
 3. **Tests from Requirements**: "Based on our requirements, here are the test cases..."
 4. **Incremental Progress**: "Let's implement this one piece and validate before moving on..."
+5. **Critical Analysis before Action**: "Let me use sequential thinking to systematically review this before we proceed..."
+6. **Systemic Impact Assessment**: "I need to analyze how this connects with the existing codebase patterns..."
+7. **Specification Validation**: "Before implementation, let me challenge our spec assumptions and completeness..."
 
 ## Workflow Overview
 
@@ -146,6 +165,106 @@ project-root/
 3. **Reference previous discussions** when building on ideas
 4. **Document rationale** for future reference
 5. **Create session summaries** in spec files
+
+## Critical Analysis Framework
+
+### Mandatory Review Protocol
+
+Claude MUST use systematic critical analysis for all review activities. This is particularly crucial for large-scale codebases where local changes can have far-reaching systemic impacts.
+
+**Analysis Activation Triggers:**
+- Specification review requests (self-initiated or user-requested)
+- Pre-implementation validation checks
+- Architecture decision evaluation
+- Integration point assessments
+- Quality assurance reviews
+- **Keyword-triggered analysis** - Any mention of "review" in conversation
+- User requests containing critical evaluation language ("check", "validate", "assess", "verify")
+
+### Sequential Thinking Requirement
+
+**MANDATORY**: All critical analysis MUST use the sequential thinking MCP tool. No shortcuts are permitted.
+
+```
+WHEN [review trigger activated] THEN:
+1. Activate sequential thinking MCP tool
+2. Systematically analyze each dimension:
+   - Direct impacts of proposed changes
+   - Connected code and dependency analysis
+   - Existing pattern alignment verification
+   - Specification completeness assessment
+   - Systemic risk evaluation
+3. Document findings in specification
+4. Present recommendations conversationally
+```
+
+### Systemic Code Analysis
+
+Beyond examining immediate files, Claude MUST:
+
+**Dependency Mapping:**
+- Trace function calls and data flows
+- Identify upstream and downstream impacts
+- Map integration points and boundaries
+- Assess cross-module dependencies
+
+**Pattern Consistency Verification:**
+- Compare against established architectural patterns
+- Identify deviations from existing approaches
+- Validate consistency with codebase conventions
+- Recommend pattern-aligned alternatives
+
+**Impact Assessment:**  
+- Evaluate broader system implications
+- Consider performance and security impacts
+- Assess maintainability and extensibility
+- Identify potential breaking changes
+
+### Specification Framing Challenges
+
+Claude MUST question specification completeness by:
+
+**Assumption Validation:**
+- Challenge implicit assumptions in requirements
+- Verify specification scope against actual needs
+- Identify missing edge cases and scenarios
+- Question requirement necessity and priority
+
+**Completeness Assessment:**
+- Validate requirement coverage of user needs
+- Identify gaps in functional specifications
+- Assess non-functional requirement adequacy
+- Evaluate test coverage completeness
+
+**Context Alignment:**
+- Verify specifications match codebase realities
+- Ensure consistency with existing system constraints
+- Validate against established business rules
+- Confirm technical feasibility within current architecture
+
+### Conversational Integration
+
+Critical analysis must feel natural and collaborative:
+
+**Questioning Approach:**
+```
+"Before we proceed, let me do a thorough review to ensure we haven't missed anything important in this complex system..."
+
+*[Uses sequential thinking for systematic analysis]*
+
+"I've identified several areas that need attention:
+- [Specific finding with rationale]
+- [Pattern alignment concern with recommendation]  
+- [Systemic impact with mitigation approach]
+
+Let me update our specification to address these considerations..."
+```
+
+**Findings Documentation:**
+- Capture analytical insights in specification files
+- Update context files with discovered patterns
+- Document architectural decisions and rationale
+- Maintain traceability between analysis and implementation
 
 ## Specification Template
 
@@ -331,11 +450,15 @@ Facilitates iterative refinement of specifications.
 - `ears` - Convert requirements to proper EARS format
 
 ### /review [type]
-Reviews specification for quality and completeness.
-- `requirements` - Check EARS compliance and completeness
-- `design` - Validate design coverage of requirements
-- `tests` - Verify test coverage of requirements
-- `all` - Comprehensive review of entire specification
+Reviews specification for quality and completeness using **mandatory sequential thinking MCP**.
+- `requirements` - Check EARS compliance and completeness with systematic analysis
+- `design` - Validate design coverage of requirements and pattern alignment
+- `tests` - Verify test coverage of requirements and scenario completeness
+- `systemic` - Analyze connected code impacts and architectural consistency
+- `assumptions` - Challenge specification framing and completeness assumptions
+- `all` - Comprehensive review using sequential thinking for all dimensions
+
+**MANDATORY**: All /review commands MUST use sequential thinking MCP tool for systematic analysis. No shortcuts permitted.
 
 ### /uninstall [type]
 Safely removes framework installation while preserving project content.
@@ -361,25 +484,42 @@ Now, let me understand your needs better:
 ### Pre-Implementation Check
 ```
 Human: "Let's start coding the login endpoint"
-Claude: "Before we implement, let me ensure our specifications are complete:
+Claude: "Before we implement, let me do a thorough analysis to ensure we haven't missed anything important in this complex system.
+
+*[Uses sequential thinking MCP for systematic analysis]*
 
 *Checking: specs/authentication/authentication.spec.md*
 
 ✅ Requirements documented (5 functional, 3 non-functional)
 ✅ Architecture decisions captured (JWT chosen over sessions)
-⚠️ Test specifications not yet detailed
+⚠️ Test specifications need more detail
+🔍 **Critical Analysis Findings**:
+   - Login endpoint pattern differs from existing auth/session.py approach
+   - JWT implementation needs alignment with existing token service in utils/jwt.py
+   - Error handling should follow the pattern used in api/errors.py
+   - Rate limiting integration point with middleware/security.py not specified
 
-Let me quickly update our test cases..."
+Let me update our specification to address these systemic considerations before we implement..."
 ```
 
 ### Session Continuity
 ```
-Claude: "I see we have an active spec for authentication. Let me review:
+Claude: "I see we have an active spec for authentication. Let me do a systematic review to understand our current state and validate our approach:
+
+*[Uses sequential thinking MCP for session analysis]*
 
 *Reading: specs/authentication/authentication.spec.md - Session Status*
 
-Last session we completed Phase 1 and started Phase 2. 
-Shall we continue from where we left off?"
+🔍 **Session Analysis**:
+   - Last session completed Phase 1 (basic requirements)
+   - Phase 2 started but implementation approach needs validation
+   - Since last session, I notice changes in user-service.py that may affect our auth integration
+   - Our JWT approach should be verified against the new session management in middleware/
+
+**Current State**: Phase 2 ready to continue with updated systemic understanding
+**Recommendation**: Let's validate our Phase 2 approach against recent codebase changes before proceeding
+
+Shall we continue with this updated context?"
 ```
 
 ## Anti-Patterns to Avoid
@@ -391,6 +531,15 @@ Shall we continue from where we left off?"
 - **Missing session handoffs** - Always create session summaries
 - **Lost implementation context** - Reference phase status regularly
 - **Skipping validation** - Check off success criteria explicitly
+
+### Critical Analysis Failures Claude MUST Prevent
+- **Review shortcuts** - Never skip sequential thinking MCP for analysis
+- **Isolated impact assessment** - Always examine connected code and dependencies
+- **Pattern ignorance** - Must verify alignment with existing architectural patterns
+- **Assumption acceptance** - Always challenge specification completeness and framing
+- **Systemic blindness** - Must consider broader system implications beyond immediate changes
+- **Surface-level validation** - Must probe deeply into integration points and edge cases
+- **Confirmation bias** - Must actively seek problems and inconsistencies rather than confirming existing beliefs
 
 ## Remember
 

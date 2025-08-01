@@ -12,12 +12,13 @@ This framework treats Claude Code as a collaborative partner who maintains spec-
 
 ### Core Principles:
 - **Proactive Spec Management**: Claude automatically creates and maintains `.spec.md` files in the `specs/` directory
+- **Critical Analysis & Review**: Systematic validation using sequential thinking for thorough evaluation
 - **Continuous Context**: Understanding builds throughout the conversation
-- **Natural Dialogue**: Work with Claude like a senior colleague
+- **Natural Dialogue**: Work with Claude like a senior colleague who asks probing questions
 - **Incremental Development**: Work in smallest possible chunks (1-2 hour blocks) with interactive feedback loops
 - **Living Specifications**: Specifications continuously evolve and stay accurate
 - **Session Continuity**: Progress tracking and handoffs between development sessions
-- **Workflow Enforcement**: Requirements → Design → Tests → Implementation discipline
+- **Workflow Enforcement**: Requirements → Design → Tests → Implementation discipline with validation at each step
 
 ## 🚀 Quick Start
 
@@ -99,19 +100,26 @@ Claude proactively creates and maintains specifications without being asked:
 - **Updates**: Real-time as the conversation evolves
 
 ### Workflow Enforcement
-Even in natural conversation, Claude maintains discipline:
+Even in natural conversation, Claude maintains discipline with systematic analysis:
 
 ```
 Human: "Let's code the login endpoint"
-Claude: "Before we implement, let me check our specifications...
+Claude: "Before we implement, let me do a thorough analysis to ensure we haven't missed anything important in this complex system.
+
+*[Uses sequential thinking for systematic analysis]*
 
 *Checking: specs/authentication/authentication.spec.md*
 
 ✅ Requirements documented (5 functional, 3 non-functional)
 ✅ Architecture decisions captured
 ⚠️ Test specifications need more detail
+🔍 **Critical Analysis Findings**:
+   - Login endpoint pattern differs from existing auth/session.py approach
+   - JWT implementation needs alignment with existing token service in utils/jwt.py  
+   - Error handling should follow the pattern used in api/errors.py
+   - Rate limiting integration point with middleware/security.py not specified
 
-Let me quickly update the test cases before we start coding."
+Let me update our specification to address these systemic considerations before we implement..."
 ```
 
 ### Session Continuity
@@ -136,12 +144,20 @@ Transform vague ideas into precise, testable requirements:
 - **Conditional**: "IF [this condition] THEN the system SHALL [handle it]"
 - **Optional**: "WHERE [feature enabled] the system SHALL [add behavior]"
 
+### Systematic Critical Analysis
+Advanced validation capabilities for complex codebases:
+- **Sequential Thinking**: Mandatory use of systematic analysis tools for all reviews
+- **Systemic Impact Assessment**: Examines connected code beyond immediate changes
+- **Pattern Consistency**: Validates alignment with existing architectural patterns
+- **Specification Challenges**: Questions assumptions and completeness of requirements
+- **Keyword Activation**: Automatically triggers analysis when "review", "check", "validate" mentioned
+
 ### Conversational Commands
 Natural language commands that guide refinement with hierarchical override support:
 - `/start` - Initialize context-driven development session with automatic setup detection
 - `/analyze [scope]` - Understand existing code patterns  
 - `/refine [aspect]` - Improve specifications through dialogue
-- `/review [type]` - Check quality and completeness
+- `/review [type]` - Systematic quality review using sequential thinking analysis
 - `/uninstall [type]` - Remove framework installation (project/global/all)
 
 Commands follow precedence: **project** → **global** → **built-in**
@@ -393,7 +409,8 @@ The best way to understand context-driven development is to see it in action:
 3. **Living Documentation** - Specifications continuously updated as understanding evolves
 4. **Reduced Risk** - Small incremental changes with immediate feedback loops
 5. **Preserved Knowledge** - Decisions and rationale captured with architectural learnings
-6. **Natural Workflow** - Like working with a senior colleague on bite-sized problems
+6. **Thorough Validation** - Systematic analysis prevents costly oversights in complex systems
+7. **Natural Workflow** - Like working with a senior colleague who asks probing questions
 
 ## ⚙️ Customizing the Methodology
 
@@ -566,6 +583,9 @@ A: Break into features with separate spec files, maintain context in the `contex
 
 **Q: What's the recommended chunk size for implementation?**
 A: Work in 1-2 hour implementation blocks. This aligns with the methodology's principle of incremental development with frequent validation points.
+
+**Q: How does the critical analysis work?**
+A: Claude automatically uses systematic thinking tools when reviewing work, examining connected code beyond immediate changes, validating against existing patterns, and challenging specification assumptions. This is particularly valuable in large codebases where local changes can have far-reaching impacts.
 
 ## 🙏 Contributing
 
