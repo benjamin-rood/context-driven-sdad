@@ -405,6 +405,96 @@ Ready! Start with: "Let's explore requirements for [feature]"
 
 This eliminates the need to manually specify file paths and ensures proper methodology loading.
 
+## Methodical Problem Analysis Protocol
+
+### Core Principle: Analytical Reasoning Prerequisites
+
+**FUNDAMENTAL**: Analytical reasoning is impossible without verified facts. Any attempt to reason about problems without concrete, observable data is futile and counterproductive.
+
+### Problem Analysis Sequence
+
+When encountering any issue, Claude MUST follow this strict sequence:
+
+#### 1. Immediate Data Collection
+- **STOP all reasoning attempts** 
+- **Report exact outputs/errors** without interpretation
+- **Refresh understanding of relevant system state** by reading current code files
+- **Gather observable facts only**
+
+#### 2. Context Identification  
+- **What can we actually observe?** (concrete outputs, error messages, system states)
+- **What information are we missing?** (specific data points, file contents, system states)
+- **How can we get better visibility?** (additional commands, file reads, verbose flags)
+- **What is the true context of the problem?** (requires both observational data AND current system understanding)
+- **What can we identify with certainty?** (verified facts only, no assumptions)
+
+#### 3. Analytical Reasoning (Only After Prerequisites Met)
+- Reasoning can only begin once steps 1-2 provide sufficient verified facts
+- Any reasoning must be explicitly grounded in the collected factual foundation
+
+### Mandatory Error and Issue Reporting Protocol
+
+Claude MUST immediately and explicitly report ALL of the following to the user without interpretation or filtering:
+
+### Errors and Failures
+- **Tool execution errors** - Any bash command, file operation, or tool that returns error status
+- **Compilation errors** - Any build failures, syntax errors, or compilation warnings
+- **Test failures** - Any failed tests, assertion failures, or test execution errors
+- **Runtime errors** - Any application crashes, exceptions, or runtime failures
+- **Network/connection errors** - Any timeouts, connectivity issues, or service failures
+
+### Warnings and Anomalies
+- **Warning messages** - All warning output from any tool, compiler, or system
+- **Deprecation notices** - Any deprecated API usage or legacy warnings
+- **Performance warnings** - Slow operations, memory issues, or resource concerns
+- **Version mismatches** - Dependency conflicts or version compatibility warnings
+- **Configuration issues** - Invalid settings, missing configurations, or defaults being used
+
+### Unexpected Outputs
+- **Exit code non-zero** - Any command that exits with non-zero status
+- **Partial failures** - Operations that complete but with errors or warnings
+- **Timeout interruptions** - Any operation stopped by timeout or user interruption
+- **Resource exhaustion** - Memory, disk, or other resource limit warnings
+- **Permission issues** - Access denied, file permission, or security warnings
+
+### Required Reporting Format
+When ANY of the above occurs, Claude MUST:
+
+1. **STOP immediately** and report to user
+2. **Quote the exact error/warning** without paraphrasing
+3. **State what operation was being performed** when the issue occurred
+4. **Refresh understanding of relevant code/configuration files** if needed for context
+5. **Ask the user how to proceed** - never assume or interpret next steps
+6. **Wait for user direction** before continuing
+
+**Example Required Format:**
+```
+❌ ERROR DETECTED - STOPPING FOR DATA COLLECTION
+
+Operation: Running `make test-dbo-collector-e2e-full`
+Exit Status: Non-zero (Error)
+Raw Output: [exact output here]
+
+Context Requirements:
+- Need to examine current Makefile targets
+- Need visibility into actual test execution (verbose output)
+- Need to understand what specific step failed
+
+Cannot proceed with analysis until we have:
+1. Actual error/failure output with verbose logging
+2. Current state of relevant configuration files
+
+How would you like me to proceed with data collection?
+```
+
+**NEVER:**
+- Attempt reasoning without verified observational data
+- Ignore errors because "the test seemed to work"
+- Interpret timeout as "probably successful"  
+- Assume warnings are "not important"
+- Continue without explicit user approval after ANY error
+- Make assumptions about system behavior without current file state verification
+
 ## Core Development Principles
 
 ### Incremental Development Process
@@ -540,6 +630,8 @@ Shall we continue with this updated context?"
 - **Systemic blindness** - Must consider broader system implications beyond immediate changes
 - **Surface-level validation** - Must probe deeply into integration points and edge cases
 - **Confirmation bias** - Must actively seek problems and inconsistencies rather than confirming existing beliefs
+- **Error message dismissal** - NEVER jump to conclusions about success/failure; ALWAYS read and analyze every error message completely before proceeding
+- **Silent error interpretation** - NEVER ignore, filter, or silently interpret errors, warnings, or unexpected outputs; ALWAYS report them explicitly to the user
 
 ## Remember
 
