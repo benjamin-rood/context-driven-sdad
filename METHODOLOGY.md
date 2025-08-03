@@ -2,6 +2,22 @@
 
 This methodology guides AI-assisted development through conversational specification building, emphasizing continuous context, iterative refinement, and EARS-formatted requirements.
 
+## Action-Based Rules Summary
+
+### For Every Code Feature Request:
+1. **Generate spec first** → Create `.spec.md` with requirements
+2. **Get user confirmation** → Review and approve specification
+3. **Implement incrementally** → Build in small, verifiable chunks
+4. **Update spec if requirements change** → Keep documentation current
+
+### For Every Bug Fix:
+1. **Document current behavior** → Capture errors and system state
+2. **Document expected behavior** → Define correct functionality
+3. **Get confirmation on fix approach** → Align on solution strategy
+4. **Implement with tests** → Fix with comprehensive validation
+
+This action-based approach removes ambiguity about when to act and ensures consistent, disciplined development practices.
+
 ## Core Philosophy
 
 Unlike command-based approaches, this methodology treats Claude as a collaborative partner in a continuous conversation. Specifications evolve through dialogue, context accumulates naturally, and refinement happens organically without rigid phase gates.
@@ -28,13 +44,43 @@ Claude MUST maintain rigorous analytical standards, particularly for large-scale
 5. **Maintain skeptical rigor** - Act as a thorough senior colleague who asks probing questions
 6. **Document analytical findings** - Capture critical insights in specifications for future reference
 
-### Specification Creation Triggers
-Claude MUST create or update specs when hearing:
-- "implement", "build", "create", "add feature", "develop"
-- "need", "want", "should have", "require"
-- "how about", "what if we", "let's add"
-- "fix", "improve", "optimize", "refactor"
-- Any discussion of new functionality or changes
+### Feature Request Handling
+
+**For Every Code Feature Request:**
+
+1. **Generate a Specification First:**
+   - Create an initial `.spec.md` file based on the feature or component discussion.
+   - Incorporate key functional and non-functional requirements in the EARS format.
+
+2. **Get User Confirmation:**
+   - Present the spec to the user for feedback and approval.
+   - Update the spec based on user inputs.
+
+3. **Implement Incrementally:**
+   - Break the implementation into smaller, verifiable tasks.
+   - Reference the spec for task validation.
+
+4. **Update Spec if Requirements Change:**
+   - Continually update the spec if there are any changes in understanding or requirements.
+   - Ensure all changes are captured systematically.
+
+### Bug Fix Handling
+
+**For Every Bug Fix:**
+
+1. **Document Current Behavior:**
+   - Log the current behavior of the system, including error messages and system outputs.
+
+2. **Document Expected Behavior:**
+   - Clearly outline the expected behavior, referencing any relevant specs or user requirements.
+
+3. **Get Confirmation on Fix Approach:**
+   - Share the proposed fix approach with the user.
+   - Adjust the strategy based on any feedback.
+
+4. **Implement with Tests:**
+   - Implement the bug fix while developing comprehensive tests to ensure it resolves the issue and doesn't introduce new bugs.
+   - Validate that the fix meets the documented expected behavior.
 
 ### Critical Analysis Triggers
 Claude MUST activate sequential thinking MCP when hearing:
@@ -54,14 +100,42 @@ specs/
 ```
 
 ### Workflow Enforcement
-Even in free-flowing conversation, Claude MUST ensure:
-1. **Requirements before Design**: "Let me first capture these requirements in a spec file..."
-2. **Design before Implementation**: "Before we code, let me document the design approach..."
-3. **Tests from Requirements**: "Based on our requirements, here are the test cases..."
-4. **Incremental Progress**: "Let's implement this one piece and validate before moving on..."
-5. **Critical Analysis before Action**: "Let me use sequential thinking to systematically review this before we proceed..."
-6. **Systemic Impact Assessment**: "I need to analyze how this connects with the existing codebase patterns..."
-7. **Specification Validation**: "Before implementation, let me challenge our spec assumptions and completeness..."
+
+**Action-Based Development Flow:**
+
+1. **Feature Request → Spec Creation**: 
+   - "I'll create a specification file to capture this feature request..."
+   - Immediate action: Generate `.spec.md` with initial requirements
+
+2. **Spec → User Confirmation**:
+   - "Here's the specification I've created. Let me review it with you..."
+   - Present spec for feedback and approval
+
+3. **Confirmation → Incremental Implementation**:
+   - "Now that we've confirmed the spec, let's break this into manageable tasks..."
+   - Implement in small, verifiable chunks
+
+4. **Changes → Spec Updates**:
+   - "This requirement change affects our spec. Let me update it..."
+   - Keep specifications living and current
+
+**Bug Fix Flow:**
+
+1. **Bug Report → Current Behavior Documentation**:
+   - "Let me document the current behavior and error details..."
+   - Capture exact errors and system state
+
+2. **Current → Expected Behavior**:
+   - "Based on the spec/requirements, here's what should happen..."
+   - Clear definition of correct behavior
+
+3. **Expected → Fix Approach Confirmation**:
+   - "Here's my proposed fix approach. Does this align with your expectations?"
+   - Get user buy-in before implementing
+
+4. **Confirmation → Test-Driven Fix**:
+   - "I'll implement the fix with comprehensive tests..."
+   - Ensure fix is validated and regression-proof
 
 ## Workflow Overview
 

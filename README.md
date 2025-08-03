@@ -8,16 +8,16 @@ _( I don't know if this approach is better, but my goal is to use both @marcelsu
 
 I have effectively been using a soft type of  [Spec-Driven Development](https://www.researchgate.net/publication/221592745_Agile_Specification-Driven_Development) with Claude since Autumn 2024 without knowing the proper terminology for it. With the public announcement of Kiro in July 2025 I had the concrete definition of the methodology I had intuitively found worked for me.
 
-This framework treats Claude Code as a collaborative partner who maintains spec-driven discipline while enabling natural conversation. Claude acts as the disciplined partner who ensures methodology rigor while you drive the conversation freely.
+This framework treats Claude Code as a collaborative partner in a continuous conversation. Specifications evolve through dialogue, context accumulates naturally, and refinement happens organically without rigid phase gates. Claude acts as the disciplined partner who maintains methodology rigor while the human drives the conversation freely.
 
 ### Core Principles:
-- **Proactive Spec Management**: Claude automatically creates and maintains `.spec.md` files in the `specs/` directory
+- **Proactive Spec Management**: Claude automatically creates and maintains `.spec.md` files in the `specs/` directory when features or changes are discussed
 - **Critical Analysis & Review**: Systematic validation using sequential thinking for thorough evaluation
 - **Continuous Context**: Understanding builds throughout the conversation
 - **Natural Dialogue**: Work with Claude like a senior colleague who asks probing questions
 - **Incremental Development**: Work in smallest possible chunks (1-2 hour blocks) with interactive feedback loops
-- **Living Specifications**: Specifications continuously evolve and stay accurate
-- **Session Continuity**: Progress tracking and handoffs between development sessions
+- **Living Specifications**: Specifications continuously evolve with status indicators (🟡 In Progress, ✅ Complete, 🔄 Needs Update, 🔴 Blocked)
+- **Session Continuity**: Progress tracking with implementation phases, checkboxes, and handoff summaries
 - **Workflow Enforcement**: Requirements → Design → Tests → Implementation discipline with validation at each step
 
 ## 🚀 Quick Start
@@ -465,21 +465,21 @@ Modify the specific sections that need changes while preserving the overall stru
 
 This repository itself uses a customized methodology. Here's how we adapted it:
 
-**Customization**: Specification location changed from `specs/` to `.claude/specs/`
+**Customization**: You might want to change specification location for specific needs
 
 **Rationale**: 
-- **Separation of Concerns**: Framework development specs should be distinct from user project specs
-- **Consistency**: All framework files reside in `.claude/` - specs should follow the same pattern  
-- **Demonstrates Flexibility**: Shows methodology can adapt while maintaining principles
+- **Organization**: Keep specs in a different location based on project structure
+- **Integration**: Align with existing documentation systems
+- **Compliance**: Meet specific regulatory or organizational requirements
 
-**Implementation**:
+**Implementation Example**:
 
-```
+```markdown
 ### Specification File Structure
 
 For any feature discussion, Claude MUST automatically create:
 
-.claude/specs/
+custom-docs/specs/
 └── [feature-name]/
     ├── [feature-name].spec.md     # Comprehensive specification
     └── history/                   # Optional: significant versions
